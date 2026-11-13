@@ -15,4 +15,5 @@ Debugging & Build Optimization ---------- Daffa  (22-26)
 
 --------------------------------------------------------
 help logis sistem tugas knp deadlinenya lama bgt aku takut - jundi
+
 bersiaplah ga tidur - frl

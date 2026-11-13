@@ -1,6 +1,6 @@
 Link Download Game
 
-Pencet aja link "CatOnMyLap.zip"
+Klik "CatOnMyLap.zip" di link ini:
 
 https://github.com/frlbelajarngoding/Cat-on-My-Lap/releases/tag/v0.1.0
 

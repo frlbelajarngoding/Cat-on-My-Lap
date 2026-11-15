@@ -1,13 +1,12 @@
 Link Download Game
-
+-------------------------------------------------------
 Klik "CatOnMyLap.zip" di link ini:
 
 https://github.com/frlbelajarngoding/Cat-on-My-Lap/releases/tag/v0.1.0
 
--------------------------------------------------------
+
 
 Deadline Budak Godot
-
 -------------------------------------------------------
 Core Controller & Input System ------------ Farrel (13-14)
 
@@ -21,7 +20,17 @@ Effect Glitch, Rewind & Cutscene Ending -- Farrel (19-21)
 
 Debugging & Build Optimization ---------- Daffa  (22-26)
 
---------------------------------------------------------
-help logis sistem tugas knp deadlinenya lama bgt aku takut - jundi
+*help logis sistem tugas knp deadlinenya lama bgt aku takut - jundi
 
-bersiaplah ga tidur - frl
+*bersiaplah ga tidur - frl
+
+History
+--------------------------------------------------------
+Logic Sistem Toleransi & State Kucing\
+Baru:
+1. scripts/cat.gd and scenes/cat.tscn.
+
+Ganti:
+1. events.gd: nambah sinyal tolerance_changed, cat_state_changed, cat_woke_up, and cat_fell
+2. player.tscn: ditambah node Cat
+3. main.tscn dan main.gd: bar, teks game over, and teks debug

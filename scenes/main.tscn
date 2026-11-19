@@ -3,6 +3,8 @@
 [ext_resource type="PackedScene" uid="uid://bro5wwxr44srk" path="res://scenes/player.tscn" id="1_0wfyh"]
 [ext_resource type="Script" uid="uid://dhp631qtool0u" path="res://scripts/main.gd" id="1_sugp2"]
 [ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="2_sugp2"]
+[ext_resource type="PackedScene" uid="uid://daij6s0iov2t8" path="res://scenes/hud.tscn" id="4_jyhfs"]
+[ext_resource type="PackedScene" uid="uid://di0efg2f87lia" path="res://scenes/day_manager.tscn" id="5_tbgi4"]
 
 [node name="Main" type="Node2D" unique_id=1621539225]
 script = ExtResource("1_sugp2")
@@ -51,3 +53,7 @@ offset_right = 640.0
 offset_bottom = 200.0
 theme_override_font_sizes/font_size = 24
 horizontal_alignment = 1
+
+[node name="HUD" parent="." unique_id=1354385996 instance=ExtResource("4_jyhfs")]
+
+[node name="DayManager" parent="." unique_id=1448822395 instance=ExtResource("5_tbgi4")]

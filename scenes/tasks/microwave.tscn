@@ -1,0 +1,27 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/task.gd" id="1_task"]
+[ext_resource type="Script" path="res://scripts/task_zone.gd" id="2_zone"]
+[ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="3_drag"]
+
+[node name="MicrowaveTask" type="Node2D"]
+script = ExtResource("1_task")
+
+[node name="PlateZone" type="Node2D" parent="."]
+position = Vector2(503, 203)
+script = ExtResource("2_zone")
+size = Vector2(44, 40)
+label_text = "Piring"
+
+[node name="Door" parent="." instance=ExtResource("3_drag")]
+position = Vector2(545, 178)
+item_name = "microwave_door"
+follow_hand = false
+label_text = "Pintu microwave"
+tint = Color(0.85, 0.85, 0.9, 1)
+
+[node name="Bowl" parent="." instance=ExtResource("3_drag")]
+position = Vector2(545, 228)
+item_name = "microwave_bowl"
+label_text = "Mangkuk"
+tint = Color(1.0, 0.75, 0.45, 1)

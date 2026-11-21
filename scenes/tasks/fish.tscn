@@ -1,0 +1,34 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/task.gd" id="1_task"]
+[ext_resource type="Script" path="res://scripts/task_zone.gd" id="2_zone"]
+[ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="3_drag"]
+
+[node name="FishTask" type="Node2D"]
+script = ExtResource("1_task")
+
+[node name="AquariumZone" type="Node2D" parent="."]
+position = Vector2(135, 178)
+script = ExtResource("2_zone")
+size = Vector2(64, 40)
+label_text = "Akuarium"
+show_when_idle = true
+color = Color(0.3, 0.7, 1.0, 0.25)
+
+[node name="LidSpot" type="Node2D" parent="."]
+position = Vector2(225, 178)
+script = ExtResource("2_zone")
+size = Vector2(36, 36)
+label_text = "Taruh tutup"
+
+[node name="FishLid" parent="." instance=ExtResource("3_drag")]
+position = Vector2(185, 178)
+item_name = "fish_lid"
+label_text = "Tutup pakan"
+tint = Color(0.85, 0.85, 0.9, 1)
+
+[node name="FishCan" parent="." instance=ExtResource("3_drag")]
+position = Vector2(185, 228)
+item_name = "fish_can"
+label_text = "Pakan ikan"
+tint = Color(1.0, 0.75, 0.45, 1)

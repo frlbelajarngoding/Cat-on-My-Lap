@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/task.gd" id="1_task"]
+[ext_resource type="Script" path="res://scripts/task_zone.gd" id="2_zone"]
+[ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="3_drag"]
+
+[node name="AlarmTask" type="Node2D"]
+script = ExtResource("1_task")
+
+[node name="TableZone" type="Node2D" parent="."]
+position = Vector2(320, 170)
+script = ExtResource("2_zone")
+size = Vector2(190, 36)
+label_text = "Meja"
+
+[node name="Alarm" parent="." instance=ExtResource("3_drag")]
+position = Vector2(250, 170)
+item_name = "alarm_clock"
+label_text = "Weker"
+tint = Color(1.0, 0.6, 0.55, 1)

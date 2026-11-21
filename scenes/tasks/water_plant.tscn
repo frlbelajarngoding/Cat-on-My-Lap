@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/task.gd" id="1_task"]
+[ext_resource type="Script" path="res://scripts/task_zone.gd" id="2_zone"]
+[ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="3_drag"]
+
+[node name="WaterPlantTask" type="Node2D"]
+script = ExtResource("1_task")
+
+[node name="PotZone" type="Node2D" parent="."]
+position = Vector2(130, 128)
+script = ExtResource("2_zone")
+size = Vector2(56, 34)
+label_text = "Tanah pot"
+show_when_idle = true
+color = Color(0.45, 0.8, 0.35, 0.25)
+
+[node name="WaterCan" parent="." instance=ExtResource("3_drag")]
+position = Vector2(190, 128)
+item_name = "water_can"
+label_text = "Kaleng air"
+tint = Color(0.55, 0.8, 1.0, 1)

@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/task.gd" id="1_task"]
+[ext_resource type="Script" path="res://scripts/task_zone.gd" id="2_zone"]
+[ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="3_drag"]
+
+[node name="CatBowlTask" type="Node2D"]
+script = ExtResource("1_task")
+
+[node name="BowlZone" type="Node2D" parent="."]
+position = Vector2(378, 170)
+script = ExtResource("2_zone")
+size = Vector2(40, 30)
+label_text = "Mangkuk"
+show_when_idle = true
+color = Color(1.0, 0.6, 0.8, 0.25)
+
+[node name="CatJar" parent="." instance=ExtResource("3_drag")]
+position = Vector2(410, 228)
+item_name = "cat_jar"
+label_text = "Toples kucing"
+tint = Color(1.0, 0.7, 0.85, 1)

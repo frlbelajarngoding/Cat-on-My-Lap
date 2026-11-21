@@ -1,0 +1,39 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/task.gd" id="1_task"]
+[ext_resource type="Script" path="res://scripts/task_zone.gd" id="2_zone"]
+[ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="3_drag"]
+
+[node name="VitaminTask" type="Node2D"]
+script = ExtResource("1_task")
+
+[node name="TableZone" type="Node2D" parent="."]
+position = Vector2(320, 170)
+script = ExtResource("2_zone")
+size = Vector2(190, 36)
+label_text = "Meja"
+
+[node name="GlassSpot" type="Node2D" parent="."]
+position = Vector2(292, 170)
+script = ExtResource("2_zone")
+size = Vector2(44, 40)
+label_text = "Gelas"
+
+[node name="MouthZone" type="Node2D" parent="."]
+position = Vector2(320, 198)
+script = ExtResource("2_zone")
+size = Vector2(44, 30)
+label_text = "Mulut"
+attach_to_player = true
+
+[node name="Glass" parent="." instance=ExtResource("3_drag")]
+position = Vector2(292, 170)
+item_name = "glass"
+label_text = "Gelas"
+tint = Color(0.55, 0.8, 1.0, 1)
+
+[node name="Bottle" parent="." instance=ExtResource("3_drag")]
+position = Vector2(334, 170)
+item_name = "vitamin_bottle"
+label_text = "Vitamin"
+tint = Color(1.0, 0.95, 0.5, 1)

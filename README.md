@@ -26,7 +26,7 @@ Debugging & Build Optimization ---------- Daffa  (22-26)
 
 History
 --------------------------------------------------------
-Logic Sistem Toleransi & State Kucing\
+A. Logic Sistem Toleransi & State Kucing\
 Baru:
 1. scripts/cat.gd and scenes/cat.tscn.
 
@@ -34,3 +34,10 @@ Ganti:
 1. events.gd: nambah sinyal tolerance_changed, cat_state_changed, cat_woke_up, and cat_fell
 2. player.tscn: ditambah node Cat
 3. main.tscn dan main.gd: bar, teks game over, and teks debug
+
+C. Logic Sistem Tugas\
+Baru: 
+1. tasks di scenes sama script
+
+Ganti:
+1. Jam ganti ke 6am to 10pm

@@ -11,6 +11,7 @@ extends CanvasLayer
 @onready var clock_label: Label = $ClockLabel
 @onready var status_label: Label = $StatusLabel
 @onready var blackout: ColorRect = $Blackout
+@onready var quest_label: Label = $QuestLabel
 
 func _ready() -> void:
 	blackout.modulate.a = 0.0   # mulai transparan
@@ -29,6 +30,10 @@ func _on_day_started(day: int) -> void:
 func show_status(text: String) -> void:
 	status_label.text = text
 	status_label.show()
+
+# Mengisi panel quest (daftar tugas aktif). Diisi TaskManager.
+func set_quest_text(text: String) -> void:
+	quest_label.text = text
 
 # Layar memudar jadi hitam. Pemanggil bisa: await hud.fade_to_black(1.0)
 func fade_to_black(duration: float) -> void:

@@ -26,6 +26,7 @@ var _prev_pos := Vector2.ZERO
 
 func _ready() -> void:
 	_prev_pos = global_position
+	add_to_group("hand")   # supaya sistem lain bisa menemukan tangan
 
 func _process(delta: float) -> void:
 	# 1. Target = posisi mouse, tapi dibatasi jangkauan lengan dari bahu.
@@ -41,8 +42,9 @@ func _process(delta: float) -> void:
 	hand_speed = lerpf(hand_speed, raw_speed, 0.25)
 	_prev_pos = global_position
 
-	# 4. Item yang dipegang selalu menempel di posisi tangan.
-	if held_item:
+	# 4. Item yang dipegang menempel di posisi tangan. Benda tetap
+	#    (tuas, pintu, laptop: follow_hand = false) tidak ikut bergerak.
+	if held_item and held_item.follow_hand:
 		held_item.global_position = global_position
 
 	# Laporkan kecepatan tangan ke sistem lain (Cat).

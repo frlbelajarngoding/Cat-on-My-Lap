@@ -83,3 +83,43 @@ signal game_completed
 # (ikan mati, alarm terlewat, dll). Otomatis menggagalkan hari.
 @warning_ignore("unused_signal")
 signal task_failed(reason: String)
+
+# ---------- Dipancarkan oleh Logic Sistem Tugas (Task & TaskManager) ----------
+
+# Tugas mulai (muncul / suara mulai berbunyi). id = kunci di TaskCatalog.
+@warning_ignore("unused_signal")
+signal task_started(task_id: String)
+
+# Tugas selesai. clean = true bila tanpa penalti (dapat bonus +1%).
+@warning_ignore("unused_signal")
+signal task_completed(task_id: String, clean: bool)
+
+# Tugas terlambat (suara masuk fase 4 / lewat batas jam). Penalti SUDAH
+# dikenakan sekali dan tugas tetap berjalan. BUKAN game over: berbeda
+# dengan task_failed di atas yang langsung menggagalkan hari.
+@warning_ignore("unused_signal")
+signal task_late(task_id: String)
+
+# Penalti sekali (tumpah, overfeed, terlambat...). Untuk toast/feedback.
+@warning_ignore("unused_signal")
+signal task_penalty(task_id: String, amount: float, reason: String)
+
+# Fase suara sebuah tugas berubah (1 pelan, 2 sedang, 3 nyaring, 4 gagal).
+# 0 tidak pernah dikirim. Dipakai audio: mulai/ubah/hentikan suara.
+@warning_ignore("unused_signal")
+signal sound_phase_changed(task_id: String, phase: int)
+
+# Semua tugas A hari ini selesai. Dipakai DayManager untuk menutup hari.
+@warning_ignore("unused_signal")
+signal required_tasks_done
+
+# ---------- Perintah ke meter kucing (didengarkan Cat) ----------
+
+# Tambah toleransi (meter kucing turun). amount dalam % meter. Dipakai
+# penalti sekali maupun drain per-frame dari suara.
+@warning_ignore("unused_signal")
+signal meter_penalty(amount: float, reason: String)
+
+# Kurangi toleransi (meter kucing pulih), mis. bonus tugas bersih.
+@warning_ignore("unused_signal")
+signal meter_recovery(amount: float)

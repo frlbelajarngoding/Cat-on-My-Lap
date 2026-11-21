@@ -99,6 +99,9 @@ func _ready() -> void:
 	Events.torso_moved.connect(func(s: float) -> void: _torso_speed = s)
 	Events.hand_moved.connect(func(s: float) -> void: _hand_speed = s)
 	Events.item_dropped.connect(_on_item_dropped)
+	# Penalti/pemulihan dari sistem tugas (suara, tumpah, tugas terlambat, bonus).
+	Events.meter_penalty.connect(_on_meter_penalty)
+	Events.meter_recovery.connect(_on_meter_recovery)
 	# Umumkan nilai awal supaya UI langsung tersinkron.
 	Events.tolerance_changed.emit(tolerance, max_tolerance)
 
@@ -148,6 +151,20 @@ func _on_item_dropped(_item: Draggable, impact_speed: float) -> void:
 	if jolt > 0.0:
 		_set_tolerance(tolerance + jolt)
 		_evaluate_state()
+
+# Penalti dari sistem tugas: toleransi naik sebesar amount (% meter).
+func _on_meter_penalty(amount: float, _reason: String) -> void:
+	if not is_alive():
+		return
+	_set_tolerance(tolerance + amount)
+	_evaluate_state()
+
+# Pemulihan dari sistem tugas: toleransi turun (tidak di bawah lantai harian).
+func _on_meter_recovery(amount: float) -> void:
+	if not is_alive():
+		return
+	_set_tolerance(tolerance - amount)
+	_evaluate_state()
 
 # Mengubah toleransi (dibatasi 0..max) dan memberi tahu UI/sistem lain.
 # Signal hanya dikirim jika nilainya benar-benar berubah.

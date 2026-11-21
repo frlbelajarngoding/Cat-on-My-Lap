@@ -26,6 +26,7 @@ var _tolerance: float = 0.0
 
 @onready var clock: GameClock = $GameClock
 @onready var hud: DayHUD = $"../HUD"
+@onready var tasks: TaskManager = $"../TaskManager"
 
 func _ready() -> void:
 	Events.tolerance_changed.connect(func(value: float, _max: float) -> void: _tolerance = value)
@@ -62,10 +63,18 @@ func _fail(reason: String) -> void:
 
 # ---------- SUKSES ----------
 
-# Jam mencapai akhir hari tanpa ada kegagalan = hari sukses.
+# Jam mencapai akhir hari (22:00). Hari hanya bisa ditutup bila semua tugas A
+# (mangkuk kucing, vitamin, dll.) selesai. Bila belum, jam berhenti di 22:00 dan
+# pemain masih harus menyelesaikannya, dengan meter kucing tetap berjalan.
 func _on_day_time_ended() -> void:
 	if phase != Phase.RUNNING:
 		return
+	if not tasks.all_required_done():
+		tasks.overtime = true
+		await Events.required_tasks_done
+		tasks.overtime = false
+		if phase != Phase.RUNNING:
+			return   # kucing keburu bangun/jatuh saat lembur
 	_finish_day()
 
 func _finish_day() -> void:
@@ -103,3 +112,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			Events.task_failed.emit("Debug: tugas gagal")
 		elif event.keycode == KEY_F2:
 			clock.time_hours = clock.end_hour - 0.01   # loncat ke akhir hari
+		elif event.keycode == KEY_F3:
+			clock.speed_scale = 1.0 if clock.speed_scale > 1.0 else 4.0   # jam x4 / normal
+		elif event.keycode == KEY_F4:
+			# Ganti ke hari berikutnya (1..MAX_DAY) untuk mencoba jadwal tiap hari.
+			GameState.current_day = GameState.current_day % GameState.MAX_DAY + 1
+			GameState.carried_tolerance = 0.0
+			get_tree().reload_current_scene()

@@ -36,6 +36,7 @@ var _origin_x := 0.0
 func _ready() -> void:
 	# Simpan posisi awal sebagai titik tengah sofa.
 	_origin_x = position.x
+	add_to_group("player")   # dipakai TaskZone yang menempel di badan (telinga, mulut)
 
 # Pergerakan dihitung di physics process agar konsisten (delta tetap).
 func _physics_process(delta: float) -> void:

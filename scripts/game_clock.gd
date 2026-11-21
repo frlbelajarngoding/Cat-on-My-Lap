@@ -6,15 +6,17 @@ extends Node
 # Memutar jam game dari start_hour sampai end_hour, lalu memberi
 # tahu lewat Events. Tidak tahu apa pun soal kucing atau tugas.
 # Skala: seconds_per_hour detik nyata = 1 jam game.
-# Default 8 detik/jam: hari 06:00-24:30 berlangsung sekitar 2,5 menit.
+# Default 15 detik/jam: hari 06:00-22:00 berlangsung 4 menit (sesuai GDD).
 # ============================================================
 
 # Jam mulai hari (06:00, sama dengan alarm pertama).
 @export var start_hour: float = 6.0
-# Jam berakhirnya hari. 24.5 = 00:30, memberi waktu mematikan alarm tengah malam.
-@export var end_hour: float = 24.5
+# Jam berakhirnya hari (22:00). Tugas A yang belum selesai menahan penutupan hari.
+@export var end_hour: float = 22.0
 # Detik nyata per 1 jam game. Makin kecil = hari makin cepat.
-@export var seconds_per_hour: float = 8.0
+@export var seconds_per_hour: float = 15.0
+# Pengali kecepatan jam. 1.0 = normal. Dipakai tombol debug F3.
+@export var speed_scale: float = 1.0
 
 # Waktu game saat ini dalam jam desimal (mis. 7.5 = 07:30).
 # Boleh dibaca sistem lain (mis. cek apakah di rentang 7-9).
@@ -44,7 +46,7 @@ func stop() -> void:
 func _process(delta: float) -> void:
 	if not running:
 		return
-	time_hours += delta / seconds_per_hour
+	time_hours += delta * speed_scale / seconds_per_hour
 	if time_hours >= end_hour:
 		time_hours = end_hour
 		_broadcast()

@@ -32,6 +32,9 @@ func _ready() -> void:
 	# .bind() menyisipkan teks alasan sebagai argumen _end_game.
 	Events.cat_woke_up.connect(_end_game.bind("Kucingnya bangun!"))
 	Events.cat_fell.connect(_end_game.bind("Kucingnya jatuh!"))
+	
+	tolerance_bar.visible = GameState.is_meter_bar_visible()
+	_on_tolerance_changed(GameState.start_tolerance(), max_tolerance)
 
 # Perbarui teks debug setiap frame.
 func _process(_delta: float) -> void:
@@ -39,12 +42,14 @@ func _process(_delta: float) -> void:
 		torso_speed, hand_speed, Cat.State.keys()[cat_state], tolerance, max_tolerance]
 
 # Sinkronkan progress bar dengan toleransi; warna hijau (tenang) -> merah (bahaya).
+# Bar = SISA METER (100% -> 0%). Di kode, meter = max - tolerance.
 func _on_tolerance_changed(value: float, max_value: float) -> void:
 	tolerance = value
 	max_tolerance = max_value
+	var meter := max_value - value
 	tolerance_bar.max_value = max_value
-	tolerance_bar.value = value
-	tolerance_bar.modulate = Color.GREEN.lerp(Color.RED, value / max_value)
+	tolerance_bar.value = meter
+	tolerance_bar.modulate = Color.RED.lerp(Color.GREEN, meter / max_value)
 
 # Menampilkan layar game over dengan alasan kegagalan.
 func _end_game(reason: String) -> void:

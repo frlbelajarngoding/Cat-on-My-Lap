@@ -18,7 +18,7 @@ extends RefCounted
 #   no_deadline_days   hari yang batasnya dimatikan (Day 1 = tutorial)
 #   penalty     % meter yang hilang SEKALI saat tugas gagal/terlambat
 #   steps       langkah berurutan (lihat daftar tipe di bawah)
-#   steps_by_day   langkah pengganti untuk hari tertentu
+#   steps_by_day   langkah pengganti, berlaku SEJAK hari tertentu
 #
 # Tipe langkah (semua mengacu ke nama node anak di scene tugas):
 #   tap     item dilepas dalam <= 0,3 detik (klik cepat)
@@ -89,6 +89,7 @@ const DEFS := {
 		"name": "Vitamin", "category": "A",
 		"scene": "res://scenes/tasks/vitamin.tscn",
 		"sound": 0.0, "deadline": 22.0, "penalty": 0.0,
+		"items_from_day": {"Cabinet": 4},
 		"steps": [
 			{"type": "hover", "item": "Bottle", "zone": "GlassSpot", "seconds": 1.5,
 				"hint": "Tuang pil: tahan botol di atas gelas"},
@@ -98,6 +99,32 @@ const DEFS := {
 				"hint": "Minum: bawa gelas ke mulut"},
 			{"type": "put", "item": "Glass", "zone": "TableZone",
 				"hint": "Taruh gelas kembali di meja"},
+		],
+		# Day 4+: vitamin disimpan di lemari, jadi ada langkah buka dan tutup.
+		"steps_by_day": {
+			4: [
+				{"type": "tap", "item": "Cabinet", "toggle": true,
+					"hint": "Buka lemari obat (klik)"},
+				{"type": "hover", "item": "Bottle", "zone": "GlassSpot", "seconds": 1.5,
+					"hint": "Ambil vitamin, tuang pil di atas gelas"},
+				{"type": "release", "item": "Bottle",
+					"hint": "Kembalikan botol"},
+				{"type": "tap", "item": "Cabinet", "toggle": true,
+					"hint": "Tutup lemari (klik)"},
+				{"type": "hover", "item": "Glass", "zone": "MouthZone", "seconds": 1.5,
+					"hint": "Minum: bawa gelas ke mulut"},
+				{"type": "put", "item": "Glass", "zone": "TableZone",
+					"hint": "Taruh gelas kembali di meja"},
+			],
+		},
+	},
+	"lamp": {
+		"name": "Matikan lampu", "category": "A",
+		"scene": "res://scenes/tasks/lamp.tscn",
+		"sound": 0.0, "penalty": 0.0,
+		"steps": [
+			{"type": "hold", "item": "Switch", "seconds": 2.0, "strict": true,
+				"hint": "Tahan saklar lampu pelan-pelan..."},
 		],
 	},
 	# ---------------------------------------------------------
@@ -137,13 +164,6 @@ const DEFS := {
 			{"type": "tap", "item": "Door", "toggle": true,
 				"hint": "Klik pintu untuk menutup"},
 		],
-		# Day 2 = tutorial: cukup buka pintunya.
-		"steps_by_day": {
-			2: [
-				{"type": "tap", "item": "Door", "toggle": true,
-					"hint": "Klik pintu microwave untuk membuka"},
-			],
-		},
 	},
 	"laptop": {
 		"name": "Notifikasi laptop", "category": "B",

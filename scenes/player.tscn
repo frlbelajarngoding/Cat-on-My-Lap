@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://msyg8qmawf66" path="res://icon.svg" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://dbcypfkgojk34" path="res://scripts/player.gd" id="1_qhqgy"]
 [ext_resource type="Script" uid="uid://cxwxocjuim54p" path="res://scripts/hand.gd" id="3_dqkch"]
-[ext_resource type="PackedScene" path="res://scenes/cat.tscn" id="4_cat"]
+[ext_resource type="PackedScene" uid="uid://bus2m5mmq6nta" path="res://scenes/cat.tscn" id="4_cat"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_bjgdg"]
 radius = 16.0
@@ -14,28 +14,52 @@ script = ExtResource("1_qhqgy")
 [node name="Torso" type="Sprite2D" parent="." unique_id=1808293158]
 texture = ExtResource("1_3vyb7")
 
-[node name="Cat" parent="." instance=ExtResource("4_cat")]
+[node name="Cat" parent="." unique_id=1848130517 instance=ExtResource("4_cat")]
 position = Vector2(0, 10)
 
-[node name="Shoulder" type="Marker2D" parent="." unique_id=593713010]
-position = Vector2(0, -30)
+[node name="ShoulderLeft" type="Marker2D" parent="." unique_id=593713010]
+position = Vector2(-24, -30)
 
-[node name="Arm" type="Line2D" parent="." unique_id=1807182894]
+[node name="ShoulderRight" type="Marker2D" parent="." unique_id=854189530]
+position = Vector2(24, -30)
+
+[node name="ArmLeft" type="Line2D" parent="." unique_id=1807182894]
 z_index = 1
 width = 8.0
 default_color = Color(0.94509804, 0.7607843, 0.49019608, 1)
 
-[node name="Hand" type="Node2D" parent="." unique_id=1831821630]
+[node name="ArmRight" type="Line2D" parent="." unique_id=908996692]
+z_index = 1
+width = 8.0
+default_color = Color(0.94509804, 0.7607843, 0.49019608, 1)
+
+[node name="HandLeft" type="Node2D" parent="." unique_id=1831821630]
 z_index = 2
 script = ExtResource("3_dqkch")
+side = 0
 
-[node name="Sprite2D" type="Sprite2D" parent="Hand" unique_id=1009331800]
+[node name="Sprite2D" type="Sprite2D" parent="HandLeft" unique_id=1009331800]
 scale = Vector2(0.15, 0.15)
 texture = ExtResource("1_3vyb7")
 
-[node name="GrabArea" type="Area2D" parent="Hand" unique_id=1064936268]
+[node name="GrabArea" type="Area2D" parent="HandLeft" unique_id=1064936268]
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hand/GrabArea" unique_id=1869859707]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HandLeft/GrabArea" unique_id=1869859707]
+shape = SubResource("CircleShape2D_bjgdg")
+
+[node name="HandRight" type="Node2D" parent="." unique_id=1453353400]
+z_index = 2
+script = ExtResource("3_dqkch")
+
+[node name="Sprite2D" type="Sprite2D" parent="HandRight" unique_id=1831565163]
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("1_3vyb7")
+
+[node name="GrabArea" type="Area2D" parent="HandRight" unique_id=18155819]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HandRight/GrabArea" unique_id=576954068]
 shape = SubResource("CircleShape2D_bjgdg")

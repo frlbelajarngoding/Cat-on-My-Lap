@@ -85,11 +85,17 @@ var _violent_timer := 0.0 # akumulasi waktu guncangan keras
 var _time := 0.0          # penghitung waktu untuk animasi bernapas
 var _base_scale := Vector2.ONE  # skala awal sprite, acuan animasi
 
+var _last_gain := 0.0     # gangguan per detik pada frame terakhir (untuk telinga)
+var _ear_pulse := 0.0     # lonjakan berkedut akibat penalti/suara (0..1)
+
+@onready var ears: Node2D = get_node_or_null("Ears")
+@onready var left_ear: Node2D = get_node_or_null("Ears/LeftEar")
+@onready var right_ear: Node2D = get_node_or_null("Ears/RightEar")
 @onready var sprite: Sprite2D = $Sprite2D
 
 func _ready() -> void:
 	# Ambil kondisi hari ini dari GameState (autoload).
-	tolerance_floor = GameState.carried_tolerance
+	tolerance_floor = GameState.start_tolerance()
 	tolerance = tolerance_floor
 	sensitivity = GameState.sensitivity_for_day()
 	
@@ -114,6 +120,7 @@ func _process(delta: float) -> void:
 	if not is_alive():
 		return   # setelah gagal, hentikan semua perhitungan
 	_time += delta
+	_ear_pulse = move_toward(_ear_pulse, 0.0, delta * 3.0)
 
 	# hand_speed dari Hand ikut naik saat torso bergeser (Hand adalah child Player),
 	# jadi kurangi dengan kecepatan torso supaya tidak terhitung dua kali.
@@ -125,6 +132,7 @@ func _process(delta: float) -> void:
 	gain += maxf(0.0, _torso_speed - torso_deadzone) * torso_weight
 	gain += maxf(0.0, rel_hand - hand_deadzone) * hand_weight
 	gain *= sensitivity
+	_last_gain = gain 
 
 	# 2. Toleransi naik karena gangguan, turun karena tenang (calm_decay).
 	_set_tolerance(tolerance + (gain - calm_decay) * delta)
@@ -156,6 +164,7 @@ func _on_item_dropped(_item: Draggable, impact_speed: float) -> void:
 func _on_meter_penalty(amount: float, _reason: String) -> void:
 	if not is_alive():
 		return
+	_ear_pulse = 1.0   # penalti/suara = telinga berkedut
 	_set_tolerance(tolerance + amount)
 	_evaluate_state()
 
@@ -219,6 +228,7 @@ func _animate() -> void:
 			var ratio := tolerance / max_tolerance
 			sprite.scale = _base_scale
 			sprite.position = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * (1.0 + ratio * 3.0)
+	_animate_ears()
 
 # Animasi sekali jalan: kucing "kaget" (membesar lalu mengecil sedikit).
 func _play_wake() -> void:
@@ -235,3 +245,13 @@ func _play_fall() -> void:
 	tw.tween_property(sprite, "position:y", 140.0, 0.6) \
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tw.tween_property(sprite, "rotation", 1.6, 0.6)
+
+# Petunjuk diegetic: telinga berkedut saat kucing terganggu (gerakan cepat, suara, penalti).
+func _animate_ears() -> void:
+	if ears == null:
+		return
+	var level := clampf(maxf(_last_gain / 4.0, _ear_pulse), 0.0, 1.0)
+	var twitch := sin(_time * 50.0) * 0.35 * level
+	left_ear.rotation = twitch
+	right_ear.rotation = -twitch
+	ears.modulate = sprite.modulate   # warna ikut state kucing

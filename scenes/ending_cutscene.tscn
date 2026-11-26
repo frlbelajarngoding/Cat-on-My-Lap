@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://bp58is60247ho"]
+
+[node name="EndingCutscene" type="CanvasLayer" unique_id=1735044515]
+layer = 30
+
+[node name="Black" type="ColorRect" parent="." unique_id=819297123]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Reflection" type="Control" parent="." unique_id=1861409016]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Head" type="ColorRect" parent="Reflection" unique_id=793815313]
+layout_mode = 0
+offset_left = 294.0
+offset_top = 120.0
+offset_right = 346.0
+offset_bottom = 176.0
+color = Color(0.6, 0.7490196, 1, 1)
+
+[node name="Shoulders" type="ColorRect" parent="Reflection" unique_id=1855089882]
+layout_mode = 0
+offset_left = 250.0
+offset_top = 184.0
+offset_right = 390.0
+offset_bottom = 360.0
+mouse_filter = 2
+color = Color(0.6, 0.7490196, 1, 1)
+
+[node name="LogLabel" type="Label" parent="." unique_id=1046211034]
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 600.0
+offset_bottom = 260.0
+theme_override_colors/font_color = Color(0.54901963, 1, 0.6509804, 1)
+autowrap_mode = 3
+
+[node name="PromptLabel" type="Label" parent="." unique_id=1591618874]
+offset_top = 322.0
+offset_right = 640.0
+offset_bottom = 345.0
+theme_override_colors/font_color = Color(0.5019608, 0.5019608, 0.5019608, 1)
+text = "Tekan R untuk mengulang dari Day 1"
+horizontal_alignment = 1
+vertical_alignment = 1

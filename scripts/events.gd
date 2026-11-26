@@ -123,3 +123,23 @@ signal meter_penalty(amount: float, reason: String)
 # Kurangi toleransi (meter kucing pulih), mis. bonus tugas bersih.
 @warning_ignore("unused_signal")
 signal meter_recovery(amount: float)
+
+# ---------- Dipancarkan oleh Effect Glitch, Rewind & Cutscene ----------
+
+# Minta efek glitch sesaat. Sistem mana pun boleh memanggil tanpa
+# mengenal FX: Events.glitch_requested.emit(0.5, 0.3)
+# strength 0..1, duration dalam detik.
+@warning_ignore("unused_signal")
+signal glitch_requested(strength: float, duration: float)
+
+# Rewind dimulai / selesai. Dipakai audio atau sistem lain yang perlu tahu.
+# from_day -> to_day sama bila mode RETRY_DAY.
+@warning_ignore("unused_signal")
+signal rewind_started(from_day: int, to_day: int)
+@warning_ignore("unused_signal")
+signal rewind_finished
+
+# Suara palsu dimulai: tim audio memutar suara milik tugas `source_id`
+# selama `duration` detik. Tidak ada tugas dan tidak ada getaran benda.
+@warning_ignore("unused_signal")
+signal fake_sound_started(source_id: String, duration: float)

@@ -26,10 +26,12 @@ const EXTRA_SOUND_STACK := 0.25
 const DAY1_SOUND_MULT := 0.5
 # Selama badai, tugas yang sudah selesai muncul lagi setelah jeda ini (detik).
 const STORM_RESPAWN_DELAY := 1.5
+# Suara palsu: menguras meter seperti suara fase 2 (%/detik), selama durasinya.
+const FAKE_DRAIN := 0.5
 
 # Tombol debug 1-9 untuk memunculkan tugas (hanya build debug).
 const DEBUG_KEYS := {
-	KEY_1: "water_plant", KEY_2: "fish", KEY_3: "kettle", KEY_4: "cat_bowl",
+	KEY_0: "lamp", KEY_1: "water_plant", KEY_2: "fish", KEY_3: "kettle", KEY_4: "cat_bowl",
 	KEY_5: "vitamin", KEY_6: "alarm", KEY_7: "phone", KEY_8: "microwave", KEY_9: "laptop",
 }
 
@@ -49,6 +51,8 @@ var _storm_ids: Array = []
 var _storm_respawn: Dictionary = {}  # id -> sisa jeda respawn
 var _log_line := ""
 var _hud_timer := 0.0
+
+var _fakes: Array = []               # [{"left": detik tersisa}]
 
 @onready var hud: DayHUD = $"../HUD"
 
@@ -88,6 +92,8 @@ func _on_time_changed(hour: int, minute: int) -> void:
 		var entry: Dictionary = _schedule.pop_front()
 		if entry.has("storm"):
 			_start_storm(entry)
+		elif entry.has("fake"):
+			_start_fake(entry)
 		else:
 			for id in entry["tasks"]:
 				_pending.append({"id": id, "after": entry.get("after", "")})
@@ -145,12 +151,17 @@ func _apply_sound_drain(delta: float) -> void:
 		if task.is_sounding():
 			count += 1
 			rate += PHASE_DRAIN[task.sound_phase]
-	if count == 0 or rate <= 0.0:
-		return
-	rate *= 1.0 + EXTRA_SOUND_STACK * (count - 1)
+	if count > 1:
+		rate *= 1.0 + EXTRA_SOUND_STACK * (count - 1)
 	if _day == 1:
 		rate *= DAY1_SOUND_MULT
-	Events.meter_penalty.emit(rate * delta, "suara")
+	# Suara palsu (Day 4+): drain tetap, hitung mundur durasinya.
+	for f in _fakes:
+		f["left"] = float(f["left"]) - delta
+		rate += FAKE_DRAIN
+	_fakes = _fakes.filter(func(f: Dictionary) -> bool: return float(f["left"]) > 0.0)
+	if rate > 0.0:
+		Events.meter_penalty.emit(rate * delta, "suara")
 
 # ---------- Badai ----------
 
@@ -199,6 +210,7 @@ func _shutdown() -> void:
 	for id in _tasks:
 		(_tasks[id] as Task).deactivate()
 	hud.set_quest_text("")
+	_fakes.clear()
 
 # ---------- Panel quest & debug ----------
 
@@ -231,3 +243,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			(_tasks[id] as Task).activate()
 		else:
 			_log("Debug: '%s' tidak ada di Day %d" % [id, _day])
+
+# Suara palsu: hanya bunyi + menguras sedikit. Tidak ada tugas dan tidak ada
+# tenggat, jadi pemain harus belajar mengabaikannya.
+func _start_fake(entry: Dictionary) -> void:
+	var seconds := float(entry.get("seconds", 8.0))
+	_fakes.append({"left": seconds})
+	Events.fake_sound_started.emit(String(entry["fake"]), seconds)
+	_log("(suara aneh...)")

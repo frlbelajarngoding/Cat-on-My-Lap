@@ -33,10 +33,13 @@ var toggled := false
 var _grab_msec := 0
 # Tween animasi kembali; disimpan agar bisa dibatalkan.
 var _tween: Tween
+# Tingkat "bunyi" (0..1): benda bergetar dan berkedip. Diatur Task.
+var _alert := 0.0
 
 @onready var sprite: Sprite2D = $Sprite2D
 
 func _ready() -> void:
+	set_process(false)   # _process hanya aktif saat benda sedang "bunyi"
 	# Catat posisi awal sebagai "rumah" item.
 	home_position = global_position
 	# Layer 2 = layer item (dideteksi GrabArea milik Hand).
@@ -98,3 +101,22 @@ func reset_to_home() -> void:
 	_tween = create_tween()
 	_tween.tween_property(self, "global_position", home_position, return_time) \
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+# Dipanggil Task: level > 0 = benda ini sedang berbunyi (bergetar + berkedip).
+func set_alert(level: float) -> void:
+	_alert = level
+	set_process(level > 0.0)
+	if level <= 0.0:
+		sprite.position = Vector2.ZERO
+		sprite.modulate = Color(tint.r, tint.g, tint.b, sprite.modulate.a)
+
+func _process(_delta: float) -> void:
+	var pulse := 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.012)
+	sprite.position = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * 2.0 * _alert
+	var c := tint.lerp(Color.WHITE, pulse * 0.6 * _alert)
+	sprite.modulate = Color(c.r, c.g, c.b, sprite.modulate.a)   # alpha tetap (toggle)
+
+# Sembunyikan / tampilkan benda (dan matikan kemampuan diambil).
+func set_enabled(on: bool) -> void:
+	visible = on
+	set_deferred("monitorable", on)

@@ -54,19 +54,27 @@ var _day := 1
 var _items: Array[Draggable] = []
 var _zones: Array[TaskZone] = []
 
+var _alert_item: Draggable = null   # benda yang sedang bergetar karena bunyi
+
 func _ready() -> void:
 	if not TaskCatalog.DEFS.has(task_id):
 		push_error("Task: id '%s' tidak ada di TaskCatalog" % task_id)
 		return
 	def = TaskCatalog.DEFS[task_id]
 	_day = GameState.current_day
+	var from_days: Dictionary = def.get("items_from_day", {})
 	for child in get_children():
 		if child is Draggable:
-			_items.append(child as Draggable)
+			var item := child as Draggable
+			_items.append(item)
+			# Benda yang baru ada mulai hari tertentu (mis. lemari obat Day 4).
+			var key := String(item.name)
+			if from_days.has(key) and _day < int(from_days[key]):
+				item.set_enabled(false)
 		elif child is TaskZone:
 			var zone := child as TaskZone
 			_zones.append(zone)
-			zone.visible = zone.show_when_idle   # zona hanya tampil saat aktif
+			zone.visible = zone.show_when_idle
 	Events.hand_moved.connect(func(s: float) -> void: _hand_speed = s)
 	Events.time_changed.connect(func(h: int, m: int) -> void: _now = h + m / 60.0)
 	Events.item_dropped.connect(_on_item_dropped)
@@ -115,6 +123,9 @@ func _complete() -> void:
 	Events.task_completed.emit(task_id, was_clean)
 
 func _reset_visuals() -> void:
+	if _alert_item:
+		_alert_item.set_alert(0.0)
+		_alert_item = null
 	for zone in _zones:
 		zone.visible = zone.show_when_idle
 	for item in _items:
@@ -122,7 +133,11 @@ func _reset_visuals() -> void:
 
 func _steps_for_day() -> Array:
 	var by_day: Dictionary = def.get("steps_by_day", {})
-	return by_day.get(_day, def["steps"])
+	var best_day := -1
+	for d in by_day:
+		if int(d) <= _day and int(d) > best_day:
+			best_day = int(d)
+	return by_day[best_day] if best_day >= 0 else def["steps"]
 
 func _sound_duration() -> float:
 	return float(def.get("sound", 0.0))
@@ -133,6 +148,7 @@ func _process(delta: float) -> void:
 	if state != State.ACTIVE:
 		return
 	_update_sound(delta)
+	_update_alert()
 	_update_deadline()
 	_spill_cooldown = maxf(0.0, _spill_cooldown - delta)
 	_update_step(delta)
@@ -296,3 +312,17 @@ func _progress_text(step: Dictionary) -> String:
 
 func _format_hour(hour: float) -> String:
 	return "%02d:%02d" % [int(hour), int((hour - floorf(hour)) * 60.0)]
+
+# Benda yang SEDANG BUNYI bergetar/berkedip. Suara palsu tidak punya ini,
+# jadi pemain bisa belajar membedakannya (GDD Day 4).
+func _update_alert() -> void:
+	var target: Draggable = null
+	if is_sounding() and _step_index < _steps.size():
+		target = _item_of(_steps[_step_index])
+		if target and target.is_held:
+			target = null
+	if _alert_item and _alert_item != target:
+		_alert_item.set_alert(0.0)
+	_alert_item = target
+	if target:
+		target.set_alert(minf(float(sound_phase) / 3.0, 1.0))   # makin keras makin kuat

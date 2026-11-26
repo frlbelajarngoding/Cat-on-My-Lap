@@ -2,9 +2,14 @@
 
 [ext_resource type="PackedScene" uid="uid://bro5wwxr44srk" path="res://scenes/player.tscn" id="1_0wfyh"]
 [ext_resource type="Script" uid="uid://dhp631qtool0u" path="res://scripts/main.gd" id="1_sugp2"]
+[ext_resource type="Script" uid="uid://cifavq7ckk2ou" path="res://scripts/standing_lamp.gd" id="2_85g3d"]
 [ext_resource type="PackedScene" uid="uid://daij6s0iov2t8" path="res://scenes/hud.tscn" id="4_jyhfs"]
 [ext_resource type="PackedScene" uid="uid://di0efg2f87lia" path="res://scenes/day_manager.tscn" id="5_tbgi4"]
 [ext_resource type="Script" uid="uid://cjq0m0cw33sql" path="res://scripts/task_manager.gd" id="6_taskmgr"]
+[ext_resource type="PackedScene" uid="uid://6t3xqmp4fmhx" path="res://scenes/fx.tscn" id="6_tefeu"]
+[ext_resource type="PackedScene" uid="uid://bp58is60247ho" path="res://scenes/ending_cutscene.tscn" id="7_o6xl0"]
+[ext_resource type="Script" uid="uid://c28uf8hn034wo" path="res://scripts/pet_system.gd" id="9_choun"]
+[ext_resource type="Script" uid="uid://dwa1m5j6o4hx3" path="res://scripts/task_zone.gd" id="10_choun"]
 
 [node name="Main" type="Node2D" unique_id=1621539225]
 script = ExtResource("1_sugp2")
@@ -22,6 +27,22 @@ offset_right = 392.0
 offset_bottom = 359.0
 mouse_filter = 2
 color = Color(0.23137255, 0.2, 0.16862746, 1)
+
+[node name="StandingLamp" type="Node2D" parent="." unique_id=397188911]
+position = Vector2(500, 175)
+script = ExtResource("2_85g3d")
+
+[node name="Pole" type="ColorRect" parent="StandingLamp" unique_id=231035690]
+offset_right = 4.0
+offset_bottom = 55.0
+pivot_offset = Vector2(-2, -55)
+color = Color(0.5019608, 0.5019608, 0.5019608, 1)
+
+[node name="Shade" type="ColorRect" parent="StandingLamp" unique_id=1192690115]
+offset_right = 32.0
+offset_bottom = 18.0
+pivot_offset = Vector2(-16, -66)
+mouse_filter = 2
 
 [node name="Player" parent="." unique_id=1265673362 instance=ExtResource("1_0wfyh")]
 position = Vector2(320, 250)
@@ -52,3 +73,18 @@ horizontal_alignment = 1
 [node name="HUD" parent="." unique_id=1354385996 instance=ExtResource("4_jyhfs")]
 
 [node name="DayManager" parent="." unique_id=1448822395 instance=ExtResource("5_tbgi4")]
+medicine_duration = null
+fade_duration = null
+fail_delay = null
+
+[node name="EndingCutscene" parent="." unique_id=1735044515 instance=ExtResource("7_o6xl0")]
+visible = false
+
+[node name="FX" parent="." unique_id=1647610987 instance=ExtResource("6_tefeu")]
+
+[node name="PetSystem" type="Node" parent="." unique_id=739375996]
+script = ExtResource("9_choun")
+
+[node name="PetZone" type="Node2D" parent="PetSystem" unique_id=1981911923]
+position = Vector2(320, 236)
+script = ExtResource("10_choun")

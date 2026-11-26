@@ -15,7 +15,6 @@
 script = ExtResource("1_sugp2")
 
 [node name="Background" type="ColorRect" parent="." unique_id=305389482]
-visible = false
 offset_right = 640.0
 offset_bottom = 360.0
 mouse_filter = 2
@@ -27,12 +26,12 @@ scale = Vector2(2, 2)
 texture = ExtResource("2_choun")
 
 [node name="Sofa" type="Sprite2D" parent="." unique_id=1026578783]
-position = Vector2(320, 300)
+position = Vector2(320, 233)
 scale = Vector2(2, 2)
 texture = ExtResource("7_sofa")
 
 [node name="Bookshelf" type="Sprite2D" parent="." unique_id=406727894]
-position = Vector2(46, 285)
+position = Vector2(500, 100)
 scale = Vector2(2, 2)
 texture = ExtResource("8_shelf")
 
@@ -42,11 +41,16 @@ scale = Vector2(2, 2)
 texture = ExtResource("9_lamp")
 
 [node name="Player" parent="." unique_id=1265673362 instance=ExtResource("1_0wfyh")]
-position = Vector2(320, 250)
+position = Vector2(320, 225)
 
 [node name="LowTable" type="Sprite2D" parent="." unique_id=104053280]
-position = Vector2(320, 205)
-scale = Vector2(2, 2)
+position = Vector2(320, 305)
+scale = Vector2(2.8, 2.171)
+texture = ExtResource("10_table")
+
+[node name="LowTable2" type="Sprite2D" parent="." unique_id=2017700351]
+position = Vector2(75, 200)
+scale = Vector2(1, 0.775)
 texture = ExtResource("10_table")
 
 [node name="TaskManager" type="Node" parent="." unique_id=1875803857]

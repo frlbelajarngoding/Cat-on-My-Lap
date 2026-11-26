@@ -1,22 +1,27 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://c4s0qpii4s5i1"]
 
-[ext_resource type="Script" path="res://scripts/task.gd" id="1_task"]
-[ext_resource type="Script" path="res://scripts/task_zone.gd" id="2_zone"]
+[ext_resource type="Script" uid="uid://dbtgakyr6tnca" path="res://scripts/task.gd" id="1_task"]
+[ext_resource type="Script" uid="uid://dwa1m5j6o4hx3" path="res://scripts/task_zone.gd" id="2_zone"]
 [ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="3_drag"]
+[ext_resource type="Texture2D" uid="uid://duqfexrn2cnix" path="res://assets/sprites/plant.png" id="4_plant"]
+[ext_resource type="Texture2D" uid="uid://c328ky7m5vjw1" path="res://assets/sprites/watering_can.png" id="5_watering_can"]
 
-[node name="WaterPlantTask" type="Node2D"]
+[node name="WaterPlantTask" type="Node2D" unique_id=340223086]
 script = ExtResource("1_task")
 
-[node name="PotZone" type="Node2D" parent="."]
-position = Vector2(130, 128)
+[node name="Plant" type="Sprite2D" parent="." unique_id=1114965584]
+position = Vector2(505, 323)
+scale = Vector2(2, 2)
+texture = ExtResource("4_plant")
+
+[node name="PotZone" type="Node2D" parent="." unique_id=2064379605]
+position = Vector2(509, 334)
 script = ExtResource("2_zone")
-size = Vector2(56, 34)
+size = Vector2(50, 30)
 label_text = "Tanah pot"
-show_when_idle = true
 color = Color(0.45, 0.8, 0.35, 0.25)
 
-[node name="WaterCan" parent="." instance=ExtResource("3_drag")]
-position = Vector2(190, 128)
+[node name="WaterCan" parent="." unique_id=1005296783 instance=ExtResource("3_drag")]
+position = Vector2(100, 342)
 item_name = "water_can"
-label_text = "Kaleng air"
-tint = Color(0.55, 0.8, 1.0, 1)
+texture = ExtResource("5_watering_can")

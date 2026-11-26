@@ -2,31 +2,54 @@
 
 [ext_resource type="PackedScene" uid="uid://bro5wwxr44srk" path="res://scenes/player.tscn" id="1_0wfyh"]
 [ext_resource type="Script" uid="uid://dhp631qtool0u" path="res://scripts/main.gd" id="1_sugp2"]
+[ext_resource type="Texture2D" uid="uid://c03jfi0i3w18k" path="res://assets/sprites/drawer.png" id="2_choun"]
 [ext_resource type="PackedScene" uid="uid://daij6s0iov2t8" path="res://scenes/hud.tscn" id="4_jyhfs"]
 [ext_resource type="PackedScene" uid="uid://di0efg2f87lia" path="res://scenes/day_manager.tscn" id="5_tbgi4"]
 [ext_resource type="Script" uid="uid://cjq0m0cw33sql" path="res://scripts/task_manager.gd" id="6_taskmgr"]
+[ext_resource type="Texture2D" uid="uid://cmtp1uljjmp5e" path="res://assets/sprites/sofa.png" id="7_sofa"]
+[ext_resource type="Texture2D" uid="uid://bfr2y4x6xsuyd" path="res://assets/sprites/bookshelf.png" id="8_shelf"]
+[ext_resource type="Texture2D" uid="uid://bjg6fqur1fy8o" path="res://assets/sprites/lamp.png" id="9_lamp"]
+[ext_resource type="Texture2D" uid="uid://corr5gknqsxfg" path="res://assets/sprites/low_table.png" id="10_table"]
 
 [node name="Main" type="Node2D" unique_id=1621539225]
 script = ExtResource("1_sugp2")
 
 [node name="Background" type="ColorRect" parent="." unique_id=305389482]
+visible = false
 offset_right = 640.0
 offset_bottom = 360.0
 mouse_filter = 2
 color = Color(0.043137256, 0.1764706, 1, 1)
 
-[node name="Sofa" type="ColorRect" parent="." unique_id=1232425381]
-offset_left = 250.0
-offset_top = 272.0
-offset_right = 392.0
-offset_bottom = 359.0
-mouse_filter = 2
-color = Color(0.23137255, 0.2, 0.16862746, 1)
+[node name="Drawer" type="Sprite2D" parent="." unique_id=867733769]
+position = Vector2(574, 326)
+scale = Vector2(2, 2)
+texture = ExtResource("2_choun")
+
+[node name="Sofa" type="Sprite2D" parent="." unique_id=1026578783]
+position = Vector2(320, 300)
+scale = Vector2(2, 2)
+texture = ExtResource("7_sofa")
+
+[node name="Bookshelf" type="Sprite2D" parent="." unique_id=406727894]
+position = Vector2(46, 285)
+scale = Vector2(2, 2)
+texture = ExtResource("8_shelf")
+
+[node name="Lamp" type="Sprite2D" parent="." unique_id=343282961]
+position = Vector2(588, 253)
+scale = Vector2(2, 2)
+texture = ExtResource("9_lamp")
 
 [node name="Player" parent="." unique_id=1265673362 instance=ExtResource("1_0wfyh")]
 position = Vector2(320, 250)
 
-[node name="TaskManager" type="Node" parent="." unique_id=1068335269]
+[node name="LowTable" type="Sprite2D" parent="." unique_id=104053280]
+position = Vector2(320, 205)
+scale = Vector2(2, 2)
+texture = ExtResource("10_table")
+
+[node name="TaskManager" type="Node" parent="." unique_id=1875803857]
 script = ExtResource("6_taskmgr")
 
 [node name="DebugLabel" type="Label" parent="." unique_id=1630325081]

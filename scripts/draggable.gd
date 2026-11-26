@@ -16,7 +16,11 @@ extends Area2D
 # False = item TIDAK ikut tangan saat dipegang. Dipakai untuk benda
 # tetap yang cuma diklik/ditahan: tuas kompor, pintu microwave, laptop.
 @export var follow_hand: bool = true
-# Teks dan warna placeholder (ganti dengan sprite asli nanti).
+# Gambar item. Kosong = tetap pakai ikon placeholder.
+@export var texture: Texture2D
+# Pembesaran gambar. Aset 1x dikali 2 agar pas dengan layar 640x360.
+@export var sprite_scale: float = 2.0
+# Teks dan warna placeholder (kosongkan label_text bila sudah ada gambar).
 @export var label_text: String = ""
 @export var tint: Color = Color.WHITE
 
@@ -43,6 +47,14 @@ func _ready() -> void:
 	# Mask 0 = item tidak mendeteksi apa pun.
 	collision_layer = 2
 	collision_mask = 0
+	if texture:
+		sprite.texture = texture
+		sprite.scale = Vector2.ONE * sprite_scale
+		# Kotak tangkap mengikuti ukuran gambar. Dibuat baru per item karena
+		# shape di draggable.tscn dipakai bersama oleh semua instance.
+		var shape := RectangleShape2D.new()
+		shape.size = texture.get_size() * sprite_scale
+		$CollisionShape2D.shape = shape
 	sprite.modulate = tint
 	if label_text != "":
 		var label := Label.new()

@@ -8,7 +8,7 @@
 script = ExtResource("1_task")
 
 [node name="Lever" parent="." instance=ExtResource("3_drag")]
-position = Vector2(95, 230)
+position = Vector2(95, 232)
 item_name = "stove_lever"
 follow_hand = false
 label_text = "Tuas kompor"

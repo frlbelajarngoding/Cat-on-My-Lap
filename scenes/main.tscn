@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://6t3xqmp4fmhx" path="res://scenes/fx.tscn" id="13_muem4"]
 [ext_resource type="Script" uid="uid://c28uf8hn034wo" path="res://scripts/pet_system.gd" id="14_dp3eg"]
 [ext_resource type="Script" uid="uid://dwa1m5j6o4hx3" path="res://scripts/task_zone.gd" id="15_0ld40"]
+[ext_resource type="PackedScene" uid="uid://cm727r0j0biux" path="res://scenes/pause_menu.tscn" id="16_jbj1t"]
 
 [node name="Main" type="Node2D" unique_id=1621539225]
 script = ExtResource("1_sugp2")
@@ -113,3 +114,5 @@ script = ExtResource("14_dp3eg")
 [node name="PetZone" type="Node2D" parent="PetSystem" unique_id=1653576925]
 position = Vector2(320, 236)
 script = ExtResource("15_0ld40")
+
+[node name="PauseMenu" parent="." unique_id=863069081 instance=ExtResource("16_jbj1t")]

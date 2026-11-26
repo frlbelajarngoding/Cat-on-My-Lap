@@ -96,6 +96,8 @@ func _on_time_changed(hour: int, minute: int) -> void:
 			_start_fake(entry)
 		else:
 			for id in entry["tasks"]:
+				if _is_queued_or_active(id):
+					continue 
 				_pending.append({"id": id, "after": entry.get("after", "")})
 
 func _process(delta: float) -> void:
@@ -139,6 +141,15 @@ func _active_sound_count() -> int:
 		if (_tasks[id] as Task).is_sounding():
 			count += 1
 	return count
+	
+# True jika tugas ini sedang aktif atau sudah menunggu giliran di antrean.
+func _is_queued_or_active(id: String) -> bool:
+	if (_tasks[id] as Task).is_active():
+		return true
+	for p in _pending:
+		if p["id"] == id:
+			return true
+	return false
 
 # ---------- Suara ----------
 

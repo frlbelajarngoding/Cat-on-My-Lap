@@ -38,14 +38,14 @@ func _ready() -> void:
 	Events.cat_fell.connect(_fail.bind("Kucingnya jatuh!"))
 	Events.task_failed.connect(_fail)
 	Events.day_time_ended.connect(_on_day_time_ended)
+	Events.task_completed.connect(_on_task_completed)
+	# Cat meng-emit nilai awal SEBELUM DayManager terhubung, jadi isi manual.
+	_tolerance = GameState.start_tolerance()
 
 	# Tunggu 1 frame supaya semua node lain (HUD, Cat) selesai _ready()
 	# dan sudah terhubung ke signal sebelum hari dimulai.
 	await get_tree().process_frame
 	_start_day()
-	
-	_tolerance = GameState.start_tolerance()   # nilai awal (Cat tidak emit bila tak berubah)
-	Events.task_completed.connect(_on_task_completed)
 
 func _start_day() -> void:
 	phase = Phase.RUNNING
@@ -88,6 +88,7 @@ func _on_day_time_ended() -> void:
 func _finish_day() -> void:
 	phase = Phase.DAY_ENDING
 	var done_day := GameState.current_day
+	var end_tolerance := _tolerance   # simpan SEKARANG, sebelum animasi akhir hari
 	Events.day_succeeded.emit(done_day)
 
 	if done_day >= GameState.MAX_DAY:
@@ -104,7 +105,7 @@ func _finish_day() -> void:
 		# Interlude: teks pendek di layar hitam sebelum hari berikutnya.
 		await hud.play_interlude(DayStory.interlude_for(done_day))
 
-	var has_next := GameState.advance_day(_tolerance)
+	var has_next := GameState.advance_day(end_tolerance)
 	if has_next:
 		get_tree().reload_current_scene()
 	else:

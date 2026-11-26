@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://6t3xqmp4fmhx"]
+
+[ext_resource type="Script" uid="uid://0s5vtffm7v26" path="res://scripts/fx_layer.gd" id="1_bgrw8"]
+
+[node name="FX" type="CanvasLayer" unique_id=1647610987]
+layer = 100
+script = ExtResource("1_bgrw8")
+
+[node name="RewindSfx" type="AudioStreamPlayer" parent="." unique_id=419911736]
+
+[node name="GlitchSfx" type="AudioStreamPlayer" parent="." unique_id=24676717]
+
+[node name="CrtOffSfx" type="AudioStreamPlayer" parent="." unique_id=38958189]

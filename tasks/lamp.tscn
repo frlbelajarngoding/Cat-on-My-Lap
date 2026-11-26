@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://bqgi1viubwkdv"]
+
+[ext_resource type="Script" uid="uid://dbtgakyr6tnca" path="res://scripts/task.gd" id="1_2ehy8"]
+[ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="2_7fpfn"]
+
+[node name="LampTask" type="Node2D" unique_id=1423446966]
+script = ExtResource("1_2ehy8")
+
+[node name="Switch" parent="." unique_id=810678117 instance=ExtResource("2_7fpfn")]
+position = Vector2(500, 140)
+item_name = "lamp_switch"
+follow_hand = false
+label_text = "Saklar Lampu"
+tint = Color(1, 0.9019608, 0.5019608, 1)

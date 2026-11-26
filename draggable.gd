@@ -1,0 +1,186 @@
+class_name Draggable
+extends Area2D
+# ============================================================
+# DRAGGABLE (Item yang bisa diambil)
+# ------------------------------------------------------------
+# Dasar untuk semua item: telepon, kaleng air, tuas kompor, dll.
+# Hand yang menggerakkan item saat dipegang; skrip ini hanya
+# mengatur status (dipegang/tidak) dan perilaku setelah dilepas.
+# Logic Sistem Tugas (Task) membaca status ini untuk menilai langkah.
+# ============================================================
+
+# Nama item, dipakai untuk identifikasi (debug / sistem tugas).
+@export var item_name: String = "item"
+# Lama (detik) item kembali ke posisi asal setelah dilepas.
+@export var return_time: float = 0.25
+# False = item TIDAK ikut tangan saat dipegang. Dipakai untuk benda
+# tetap yang cuma diklik/ditahan: tuas kompor, pintu microwave, laptop.
+@export var follow_hand: bool = true
+# Gambar item. Kosong = tetap pakai ikon placeholder.
+@export var texture: Texture2D
+# Pembesaran gambar. Aset 1x dikali 2 agar pas dengan layar 640x360.
+@export var sprite_scale: float = 2.0
+# Teks dan warna placeholder (kosongkan label_text bila sudah ada gambar).
+@export var label_text: String = ""
+@export var tint: Color = Color.WHITE
+
+# Posisi awal item di dunia; tujuan kembali setelah di-drop.
+var home_position: Vector2
+# True selama item dipegang tangan.
+var is_held := false
+# Berapa lama (detik) item dipegang pada pegangan terakhir.
+# Dipakai untuk membedakan klik cepat (tap) dari tahan.
+var last_hold_time := 0.0
+# Status tampilan ganda (mis. pintu terbuka). Diubah lewat toggle().
+var toggled := false
+# Waktu (ms) saat item terakhir diambil.
+var _grab_msec := 0
+# Tween animasi kembali; disimpan agar bisa dibatalkan.
+var _tween: Tween
+# Tingkat "bunyi" (0..1): benda bergetar dan berkedip. Diatur Task.
+var _alert := 0.0
+# Outline putih penanda "benda ini perlu diurus". Dibuat dari siluet gambar
+# (tanpa shader), baru dibangun saat pertama kali dibutuhkan.
+const OUTLINE_PX := 1          # tebal outline dalam piksel TEKSTUR (x sprite_scale di layar)
+var _outline: Sprite2D
+var _outline_tween: Tween
+
+@onready var sprite: Sprite2D = $Sprite2D
+
+func _ready() -> void:
+	set_process(false)   # _process hanya aktif saat benda sedang "bunyi"
+	# Catat posisi awal sebagai "rumah" item.
+	home_position = global_position
+	# Layer 2 = layer item (dideteksi GrabArea milik Hand).
+	# Mask 0 = item tidak mendeteksi apa pun.
+	collision_layer = 2
+	collision_mask = 0
+	if texture:
+		sprite.texture = texture
+		sprite.scale = Vector2.ONE * sprite_scale
+		# Kotak tangkap mengikuti ukuran gambar. Dibuat baru per item karena
+		# shape di draggable.tscn dipakai bersama oleh semua instance.
+		var shape := RectangleShape2D.new()
+		shape.size = texture.get_size() * sprite_scale
+		$CollisionShape2D.shape = shape
+	sprite.modulate = tint
+	if label_text != "":
+		var label := Label.new()
+		label.text = label_text
+		label.add_theme_font_size_override("font_size", 8)
+		label.custom_minimum_size = Vector2(70, 0)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.position = Vector2(-35, 11)
+		add_child(label)
+
+# Dipanggil Hand saat item diambil.
+func on_grabbed() -> void:
+	# Batalkan animasi kembali yang mungkin masih berjalan.
+	if _tween:
+		_tween.kill()
+	is_held = true
+	_grab_msec = Time.get_ticks_msec()
+	z_index = 10   # tampil di atas objek lain selama dipegang
+	AudioManager.play_sfx("click", 0.05) 
+
+# Dipanggil Hand saat item dilepas.
+func on_dropped() -> void:
+	is_held = false
+	z_index = 0
+	last_hold_time = (Time.get_ticks_msec() - _grab_msec) / 1000.0
+	if not follow_hand:
+		return   # benda tetap: tidak ada yang perlu dikembalikan
+	# Item meluncur kembali ke posisi asal. Task bisa membatalkannya
+	# lewat keep_here() bila item memang harus tetap di tempat baru.
+	_tween = create_tween()
+	_tween.tween_property(self, "global_position", home_position, return_time) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+# Item tetap di posisinya sekarang (batalkan animasi kembali).
+# Dipanggil Task tepat setelah on_dropped() pada langkah "stay".
+func keep_here() -> void:
+	if _tween:
+		_tween.kill()
+
+# Ganti tampilan ganda (mis. pintu tertutup <-> terbuka).
+# Placeholder: item jadi setengah transparan saat toggled.
+func toggle() -> void:
+	toggled = not toggled
+	sprite.modulate.a = 0.35 if toggled else tint.a
+
+# Kembalikan item ke kondisi awal setelah tugas selesai.
+func reset_to_home() -> void:
+	if toggled:
+		toggle()
+	if is_held or not follow_hand:
+		return
+	if _tween:
+		_tween.kill()
+	_tween = create_tween()
+	_tween.tween_property(self, "global_position", home_position, return_time) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+# Dipanggil Task: level > 0 = benda ini sedang berbunyi (bergetar + berkedip).
+func set_alert(level: float) -> void:
+	_alert = level
+	set_process(level > 0.0)
+	if level <= 0.0:
+		sprite.position = Vector2.ZERO
+		sprite.modulate = Color(tint.r, tint.g, tint.b, sprite.modulate.a)
+
+func _process(_delta: float) -> void:
+	var pulse := 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.012)
+	sprite.position = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * 2.0 * _alert
+	var c := tint.lerp(Color.WHITE, pulse * 0.6 * _alert)
+	sprite.modulate = Color(c.r, c.g, c.b, sprite.modulate.a)   # alpha tetap (toggle)
+
+# Dipanggil Task: true = tampilkan outline putih berkedip di sekeliling benda.
+func set_highlight(on: bool) -> void:
+	if on == (_outline != null and _outline.visible):
+		return
+	if on:
+		if _outline == null:
+			_build_outline()
+		if _outline == null:
+			return
+		_outline.visible = true
+		_outline.self_modulate.a = 1.0
+		_outline_tween = create_tween().set_loops()
+		_outline_tween.tween_property(_outline, "self_modulate:a", 0.45, 0.4)
+		_outline_tween.tween_property(_outline, "self_modulate:a", 1.0, 0.4)
+	else:
+		if _outline_tween:
+			_outline_tween.kill()
+		_outline.visible = false
+
+# Buat sprite siluet putih (gambar dilebarkan OUTLINE_PX) yang digambar DI BELAKANG sprite.
+func _build_outline() -> void:
+	var tex := sprite.texture
+	if tex == null:
+		return
+	var img := tex.get_image()
+	if img == null:
+		return
+	if img.is_compressed():
+		img.decompress()
+	img.convert(Image.FORMAT_RGBA8)
+	var w := img.get_width()
+	var h := img.get_height()
+	var pad := OUTLINE_PX
+	var out := Image.create(w + pad * 2, h + pad * 2, false, Image.FORMAT_RGBA8)
+	for y in range(h):
+		for x in range(w):
+			if img.get_pixel(x, y).a > 0.1:
+				for dy in range(-pad, pad + 1):
+					for dx in range(-pad, pad + 1):
+						out.set_pixel(x + pad + dx, y + pad + dy, Color.WHITE)
+	_outline = Sprite2D.new()
+	_outline.texture = ImageTexture.create_from_image(out)
+	_outline.show_behind_parent = true   # anak sprite, digambar sebelum induknya
+	_outline.visible = false
+	sprite.add_child(_outline)           # ikut skala, getaran, dan posisi sprite
+
+# Sembunyikan / tampilkan benda (dan matikan kemampuan diambil).
+func set_enabled(on: bool) -> void:
+	visible = on
+	set_deferred("monitorable", on)

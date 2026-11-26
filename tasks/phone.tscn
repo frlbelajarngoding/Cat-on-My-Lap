@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://br7xkqjf27of4"]
+
+[ext_resource type="Script" uid="uid://dbtgakyr6tnca" path="res://scripts/task.gd" id="1_task"]
+[ext_resource type="Script" uid="uid://dwa1m5j6o4hx3" path="res://scripts/task_zone.gd" id="2_zone"]
+[ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="3_drag"]
+[ext_resource type="Texture2D" uid="uid://c03jfi0i3w18k" path="res://assets/sprites/drawer.png" id="4_drawer"]
+[ext_resource type="Texture2D" uid="uid://bx53kf0riki5o" path="res://assets/sprites/rotary_phone.png" id="5_rotary_phone"]
+
+[node name="PhoneTask" type="Node2D" unique_id=1482142258]
+script = ExtResource("1_task")
+
+[node name="Drawer" type="Sprite2D" parent="." unique_id=1894079481]
+visible = false
+position = Vector2(574, 326)
+scale = Vector2(2, 2)
+texture = ExtResource("4_drawer")
+
+[node name="CradleZone" type="Node2D" parent="." unique_id=1048987161]
+position = Vector2(557, 264)
+script = ExtResource("2_zone")
+size = Vector2(54, 44)
+label_text = "Dudukan"
+
+[node name="EarZone" type="Node2D" parent="." unique_id=1731284562]
+position = Vector2(358, 198)
+script = ExtResource("2_zone")
+size = Vector2(44, 30)
+label_text = "Telinga"
+attach_to_player = true
+
+[node name="Handset" parent="." unique_id=475887669 instance=ExtResource("3_drag")]
+position = Vector2(557, 263)
+item_name = "phone_handset"
+texture = ExtResource("5_rotary_phone")

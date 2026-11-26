@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://msyg8qmawf66" path="res://icon.svg" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://dbcypfkgojk34" path="res://scripts/player.gd" id="1_qhqgy"]
+[ext_resource type="Texture2D" uid="uid://dtb4b1j7sefgj" path="res://assets/sprites/player.png" id="2_qlg0r"]
 [ext_resource type="Script" uid="uid://cxwxocjuim54p" path="res://scripts/hand.gd" id="3_dqkch"]
 [ext_resource type="PackedScene" uid="uid://bus2m5mmq6nta" path="res://scenes/cat.tscn" id="4_cat"]
 
@@ -12,7 +13,8 @@ radius = 16.0
 script = ExtResource("1_qhqgy")
 
 [node name="Torso" type="Sprite2D" parent="." unique_id=1808293158]
-texture = ExtResource("1_3vyb7")
+scale = Vector2(2, 2)
+texture = ExtResource("2_qlg0r")
 
 [node name="Cat" parent="." unique_id=1848130517 instance=ExtResource("4_cat")]
 position = Vector2(0, 10)

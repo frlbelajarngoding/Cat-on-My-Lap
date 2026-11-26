@@ -1,22 +1,24 @@
 [gd_scene format=3 uid="uid://bus2m5mmq6nta"]
 
 [ext_resource type="Script" uid="uid://clyplwxj4dmpl" path="res://scripts/cat.gd" id="1_cat"]
-[ext_resource type="Texture2D" uid="uid://msyg8qmawf66" path="res://icon.svg" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://cxwmohtojkial" path="res://assets/sprites/cat.png" id="2_se5fe"]
 
 [node name="Cat" type="Node2D" unique_id=1878101907]
 z_index = 1
 script = ExtResource("1_cat")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=103498681]
-scale = Vector2(0.3, 0.3)
-texture = ExtResource("2_icon")
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("2_se5fe")
 
 [node name="Ears" type="Node2D" parent="." unique_id=962274875]
 
 [node name="LeftEar" type="Polygon2D" parent="Ears" unique_id=1699779470]
+visible = false
 position = Vector2(-10, -17)
 polygon = PackedVector2Array(-6, 0, 0, 14, 6, 0)
 
 [node name="RightEar" type="Polygon2D" parent="Ears" unique_id=154768736]
+visible = false
 position = Vector2(10, -17)
 polygon = PackedVector2Array(-6, 0, 0, -14, 6, 0)

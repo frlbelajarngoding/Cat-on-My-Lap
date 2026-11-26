@@ -55,6 +55,9 @@ var _items: Array[Draggable] = []
 var _zones: Array[TaskZone] = []
 
 var _alert_item: Draggable = null   # benda yang sedang bergetar karena bunyi
+var _hint_item: Draggable = null    # benda yang sedang diberi outline putih
+var _hint_zone: TaskZone = null     # zona tujuan yang sedang diberi outline putih
+var _sound_player: AudioStreamPlayer = null   # pemutar suara alarm (looping) yang harus dimatikan
 
 func _ready() -> void:
 	if not TaskCatalog.DEFS.has(task_id):
@@ -106,6 +109,8 @@ func activate() -> void:
 	Events.task_started.emit(task_id)
 	if sound_phase > 0:
 		Events.sound_phase_changed.emit(task_id, sound_phase)
+		
+	_play_task_sound(GameState.current_day)
 
 # Hentikan paksa (hari gagal / berakhir).
 func deactivate() -> void:
@@ -121,8 +126,16 @@ func _complete() -> void:
 	if was_clean:
 		Events.meter_recovery.emit(CLEAN_BONUS)
 	Events.task_completed.emit(task_id, was_clean)
+	AudioManager.play_sfx("click", 0.05, -2.0)
 
 func _reset_visuals() -> void:
+	_stop_task_sound()
+	if _hint_item:
+		_hint_item.set_highlight(false)
+		_hint_item = null
+	if _hint_zone:
+		_hint_zone.set_highlight(false)
+		_hint_zone = null
 	if _alert_item:
 		_alert_item.set_alert(0.0)
 		_alert_item = null
@@ -149,6 +162,7 @@ func _process(delta: float) -> void:
 		return
 	_update_sound(delta)
 	_update_alert()
+	_update_highlight()
 	_update_deadline()
 	_spill_cooldown = maxf(0.0, _spill_cooldown - delta)
 	_update_step(delta)
@@ -193,6 +207,31 @@ func _penalize(amount: float, reason: String) -> void:
 	_clean = false
 	Events.meter_penalty.emit(amount, reason)
 	Events.task_penalty.emit(task_id, amount, reason)
+
+# audido
+func _play_task_sound(phase_level: int = 1) -> void:
+	# Sesuaikan volume berdasarkan fase (Fase 1 pelan, Fase 3 nyaring)
+	var vol_db := -10.0
+	if phase_level == 2:
+		vol_db = -4.0
+	elif phase_level >= 3:
+		vol_db = 2.0
+
+	match task_id: # sesuaikan dengan nama variabel ID tugas di task.gd Anda
+		"alarm":
+			_stop_task_sound()
+			_sound_player = AudioManager.play_sfx("alarm", 0.0, vol_db)
+		"phone", "laptop", "microwave", "kettle":
+			# Gunakan click/alert sementara jika file RAW belum dikonversi ke .wav/.ogg
+			AudioManager.play_sfx("click", 0.1, vol_db)
+		"water_plant":
+			AudioManager.play_sfx("water", 0.05, 0.0)
+
+# Matikan suara looping (alarm) saat tugas selesai / dibatalkan.
+func _stop_task_sound() -> void:
+	if _sound_player and is_instance_valid(_sound_player):
+		_sound_player.stop()
+	_sound_player = null
 
 # ---------- Penilaian langkah ----------
 
@@ -326,3 +365,25 @@ func _update_alert() -> void:
 	_alert_item = target
 	if target:
 		target.set_alert(minf(float(sound_phase) / 3.0, 1.0))   # makin keras makin kuat
+
+# Outline putih pada benda yang harus disentuh di langkah sekarang.
+# Hilang saat benda dipegang, muncul lagi bila dilepas sebelum langkah selesai.
+func _update_highlight() -> void:
+	var target: Draggable = null
+	var zone: TaskZone = null
+	if _step_index < _steps.size():
+		var step: Dictionary = _steps[_step_index]
+		target = _item_of(step)
+		zone = _zone_of(step)
+		if target and target.is_held:
+			target = null
+	if _hint_item and _hint_item != target:
+		_hint_item.set_highlight(false)
+	_hint_item = target
+	if target:
+		target.set_highlight(true)
+	if _hint_zone and _hint_zone != zone:
+		_hint_zone.set_highlight(false)
+	_hint_zone = zone
+	if zone:
+		zone.set_highlight(true)

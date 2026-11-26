@@ -8,7 +8,7 @@ extends Node2D
 # ============================================================
 
 @onready var label: Label = $DebugLabel               # teks debug pojok layar
-@onready var tolerance_bar: ProgressBar = $ToleranceBar  # bar toleransi kucing
+@onready var tolerance_bar: TextureProgressBar = $ToleranceBar  # bar meter kucing
 @onready var game_over_label: Label = $GameOverLabel  # teks saat gagal
 
 # Salinan lokal data dari Events, hanya untuk ditampilkan.
@@ -32,24 +32,23 @@ func _ready() -> void:
 	# .bind() menyisipkan teks alasan sebagai argumen _end_game.
 	Events.cat_woke_up.connect(_end_game.bind("Kucingnya bangun!"))
 	Events.cat_fell.connect(_end_game.bind("Kucingnya jatuh!"))
-	
-	tolerance_bar.visible = GameState.is_meter_bar_visible()
-	_on_tolerance_changed(GameState.start_tolerance(), max_tolerance)
 
 # Perbarui teks debug setiap frame.
 func _process(_delta: float) -> void:
 	label.text = "Torso: %.0f px/s\nHand: %.0f px/s\nCat: %s\nTolerance: %.0f / %.0f" % [
 		torso_speed, hand_speed, Cat.State.keys()[cat_state], tolerance, max_tolerance]
 
-# Sinkronkan progress bar dengan toleransi; warna hijau (tenang) -> merah (bahaya).
-# Bar = SISA METER (100% -> 0%). Di kode, meter = max - tolerance.
+# Sinkronkan bar dengan meter kucing. Bar menunjukkan SISA meter (penuh = tenang,
+# kosong = kucing bangun), sesuai GDD. Toleransi di kode berarti kebalikannya.
+# Di bawah 25% (zona bahaya) isi bar berubah kemerahan.
 func _on_tolerance_changed(value: float, max_value: float) -> void:
 	tolerance = value
 	max_tolerance = max_value
-	var meter := max_value - value
+	var remaining := max_value - value
 	tolerance_bar.max_value = max_value
-	tolerance_bar.value = meter
-	tolerance_bar.modulate = Color.RED.lerp(Color.GREEN, meter / max_value)
+	tolerance_bar.value = remaining
+	var danger := remaining / max_value < 0.25
+	tolerance_bar.tint_progress = Color(1.0, 0.55, 0.55) if danger else Color.WHITE
 
 # Menampilkan layar game over dengan alasan kegagalan.
 func _end_game(reason: String) -> void:

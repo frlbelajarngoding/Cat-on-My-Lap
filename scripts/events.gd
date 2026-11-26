@@ -143,11 +143,3 @@ signal rewind_finished
 # selama `duration` detik. Tidak ada tugas dan tidak ada getaran benda.
 @warning_ignore("unused_signal")
 signal fake_sound_started(source_id: String, duration: float)
-
-# ---------- Dipancarkan oleh PauseMenu ----------
-
-# Game di-pause / dilanjutkan lewat menu pause. Dipakai audio atau sistem yang perlu tahu.
-@warning_ignore("unused_signal")
-signal game_paused
-@warning_ignore("unused_signal")
-signal game_resumed

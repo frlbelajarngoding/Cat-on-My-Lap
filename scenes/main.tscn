@@ -15,7 +15,8 @@
 [ext_resource type="PackedScene" uid="uid://6t3xqmp4fmhx" path="res://scenes/fx.tscn" id="13_muem4"]
 [ext_resource type="Script" uid="uid://c28uf8hn034wo" path="res://scripts/pet_system.gd" id="14_dp3eg"]
 [ext_resource type="Script" uid="uid://dwa1m5j6o4hx3" path="res://scripts/task_zone.gd" id="15_0ld40"]
-[ext_resource type="PackedScene" uid="uid://cm727r0j0biux" path="res://scenes/pause_menu.tscn" id="16_jbj1t"]
+[ext_resource type="Texture2D" uid="uid://evp46md4xkgo" path="res://assets/ui/healthbar_under.png" id="16_muem4"]
+[ext_resource type="Texture2D" uid="uid://ddq0x4g1nxdcb" path="res://assets/ui/healthbar_fill.png" id="17_dp3eg"]
 
 [node name="Main" type="Node2D" unique_id=1621539225]
 script = ExtResource("1_sugp2")
@@ -44,7 +45,7 @@ pivot_offset = Vector2(-16, -66)
 mouse_filter = 2
 
 [node name="Drawer" type="Sprite2D" parent="." unique_id=867733769]
-position = Vector2(574, 326)
+position = Vector2(574, 315)
 scale = Vector2(2, 2)
 texture = ExtResource("2_choun")
 
@@ -59,7 +60,7 @@ scale = Vector2(2, 2)
 texture = ExtResource("8_shelf")
 
 [node name="Lamp" type="Sprite2D" parent="." unique_id=343282961]
-position = Vector2(588, 253)
+position = Vector2(588, 242)
 scale = Vector2(2, 2)
 texture = ExtResource("9_lamp")
 
@@ -83,13 +84,17 @@ script = ExtResource("6_taskmgr")
 offset_right = 40.0
 offset_bottom = 23.0
 
-[node name="ToleranceBar" type="ProgressBar" parent="." unique_id=822102613]
-offset_left = 220.0
-offset_top = 8.0
-offset_right = 420.0
-offset_bottom = 30.0
-mouse_filter = 2
-show_percentage = false
+[node name="ToleranceBar" type="TextureProgressBar" parent="." unique_id=1398576524]
+offset_left = 400.0
+offset_top = 12.0
+offset_right = 440.0
+offset_bottom = 97.0
+rotation = 1.5707964
+scale = Vector2(2, 2)
+fill_mode = 3
+texture_under = ExtResource("16_muem4")
+texture_progress = ExtResource("17_dp3eg")
+texture_progress_offset = Vector2(3, 3)
 
 [node name="GameOverLabel" type="Label" parent="." unique_id=1144044184]
 visible = false
@@ -114,5 +119,3 @@ script = ExtResource("14_dp3eg")
 [node name="PetZone" type="Node2D" parent="PetSystem" unique_id=1653576925]
 position = Vector2(320, 236)
 script = ExtResource("15_0ld40")
-
-[node name="PauseMenu" parent="." unique_id=863069081 instance=ExtResource("16_jbj1t")]

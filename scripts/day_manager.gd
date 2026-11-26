@@ -19,7 +19,7 @@ enum Phase { RUNNING, DAY_ENDING, FAILED, FINISHED }
 @export var fade_duration: float = 1.0
 # Jeda setelah gagal sebelum rewind dimulai: memberi waktu animasi
 # kucing bangun/jatuh selesai dan pemain membaca alasan gagal (detik).
-@export var fail_delay: float = 1.0
+@export var fail_delay: float = 3.0
 
 var phase: Phase = Phase.RUNNING
 
@@ -38,18 +38,19 @@ func _ready() -> void:
 	Events.cat_fell.connect(_fail.bind("Kucingnya jatuh!"))
 	Events.task_failed.connect(_fail)
 	Events.day_time_ended.connect(_on_day_time_ended)
-	Events.task_completed.connect(_on_task_completed)
-	# Cat meng-emit nilai awal SEBELUM DayManager terhubung, jadi isi manual.
-	_tolerance = GameState.start_tolerance()
 
 	# Tunggu 1 frame supaya semua node lain (HUD, Cat) selesai _ready()
 	# dan sudah terhubung ke signal sebelum hari dimulai.
 	await get_tree().process_frame
 	_start_day()
+	
+	_tolerance = GameState.start_tolerance()   # nilai awal (Cat tidak emit bila tak berubah)
+	Events.task_completed.connect(_on_task_completed)
 
 func _start_day() -> void:
 	phase = Phase.RUNNING
 	Events.day_started.emit(GameState.current_day)
+	AudioManager.play_bgm_for_day(GameState.current_day)
 	clock.start()
 
 # ---------- GAGAL ----------
@@ -59,12 +60,14 @@ func _fail(reason: String) -> void:
 	if phase != Phase.RUNNING:
 		return
 	phase = Phase.FAILED
+	AudioManager.stop_bgm()
+	AudioManager.play_sfx("glitch_heavy")
 	clock.stop()
 	hud.show_status(reason)
 	Events.day_failed.emit(GameState.current_day, reason)
 
 	# Day 1 (tutorial): restart langsung tanpa jeda panjang dan tanpa penalti.
-	var delay := 0.6 if GameState.is_forgiving_day() else fail_delay
+	var delay := 2.0 if GameState.is_forgiving_day() else fail_delay
 	await get_tree().create_timer(delay).timeout
 	GameState.fail_day()
 	get_tree().reload_current_scene()
@@ -88,10 +91,10 @@ func _on_day_time_ended() -> void:
 func _finish_day() -> void:
 	phase = Phase.DAY_ENDING
 	var done_day := GameState.current_day
-	var end_tolerance := _tolerance   # simpan SEKARANG, sebelum animasi akhir hari
 	Events.day_succeeded.emit(done_day)
 
 	if done_day >= GameState.MAX_DAY:
+		AudioManager.stop_bgm() # Hentikan BGM saat lampu dimatikan di Day 5
 		# Day 5: lampu dimatikan -> kabel tertarik -> ending (tanpa "minum obat").
 		hud.show_status("Kabelnya tertarik...")
 		await get_tree().create_timer(1.5).timeout
@@ -101,11 +104,12 @@ func _finish_day() -> void:
 	else:
 		hud.show_status("Minum obat...")
 		await get_tree().create_timer(medicine_duration).timeout
+		AudioManager.stop_bgm() # Hentikan BGM saat masuk layar hitam/interlude
 		await hud.fade_to_black(fade_duration)
 		# Interlude: teks pendek di layar hitam sebelum hari berikutnya.
 		await hud.play_interlude(DayStory.interlude_for(done_day))
 
-	var has_next := GameState.advance_day(end_tolerance)
+	var has_next := GameState.advance_day(_tolerance)
 	if has_next:
 		get_tree().reload_current_scene()
 	else:

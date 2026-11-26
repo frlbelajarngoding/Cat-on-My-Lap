@@ -5,23 +5,28 @@
 [ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="3_drag"]
 [ext_resource type="Texture2D" uid="uid://duqfexrn2cnix" path="res://assets/sprites/plant.png" id="4_plant"]
 [ext_resource type="Texture2D" uid="uid://c328ky7m5vjw1" path="res://assets/sprites/watering_can.png" id="5_watering_can"]
+[ext_resource type="AudioStream" uid="uid://db7x6xem644nl" path="res://assets/audio/sfx/water.wav" id="6_rdjoe"]
 
 [node name="WaterPlantTask" type="Node2D" unique_id=340223086]
 script = ExtResource("1_task")
 
 [node name="Plant" type="Sprite2D" parent="." unique_id=1114965584]
-position = Vector2(505, 323)
+z_index = 999
+position = Vector2(514, 285)
 scale = Vector2(2, 2)
 texture = ExtResource("4_plant")
 
 [node name="PotZone" type="Node2D" parent="." unique_id=2064379605]
-position = Vector2(509, 334)
+position = Vector2(493, 252)
 script = ExtResource("2_zone")
 size = Vector2(50, 30)
 label_text = "Tanah pot"
 color = Color(0.45, 0.8, 0.35, 0.25)
 
 [node name="WaterCan" parent="." unique_id=1005296783 instance=ExtResource("3_drag")]
-position = Vector2(100, 342)
+position = Vector2(130, 307)
 item_name = "water_can"
 texture = ExtResource("5_watering_can")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1454700882]
+stream = ExtResource("6_rdjoe")

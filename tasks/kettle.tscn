@@ -1,0 +1,15 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/task.gd" id="1_task"]
+[ext_resource type="Script" path="res://scripts/task_zone.gd" id="2_zone"]
+[ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="3_drag"]
+
+[node name="KettleTask" type="Node2D"]
+script = ExtResource("1_task")
+
+[node name="Lever" parent="." instance=ExtResource("3_drag")]
+position = Vector2(95, 232)
+item_name = "stove_lever"
+follow_hand = false
+label_text = "Tuas kompor"
+tint = Color(1.0, 0.6, 0.55, 1)

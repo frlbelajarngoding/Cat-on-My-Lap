@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://di0efg2f87lia"]
+
+[ext_resource type="Script" uid="uid://b07niag5p2auv" path="res://scripts/day_manager.gd" id="1_c7ycp"]
+[ext_resource type="Script" uid="uid://bpthji1qohs12" path="res://scripts/game_clock.gd" id="2_5a1ai"]
+
+[node name="DayManager" type="Node" unique_id=1448822395]
+script = ExtResource("1_c7ycp")
+
+[node name="GameClock" type="Node" parent="." unique_id=1650892269]
+script = ExtResource("2_5a1ai")

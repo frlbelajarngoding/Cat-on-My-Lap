@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://0ta7pwp7i68g"]
+
+[ext_resource type="Script" uid="uid://dbtgakyr6tnca" path="res://scripts/task.gd" id="1_task"]
+[ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="3_drag"]
+
+[node name="LaptopTask" type="Node2D" unique_id=1581492920]
+script = ExtResource("1_task")
+
+[node name="Notif" parent="." unique_id=427911872 instance=ExtResource("3_drag")]
+position = Vector2(461, 273)
+item_name = "laptop_notif"
+follow_hand = false
+label_text = "Laptop"
+tint = Color(0.55, 0.8, 1, 1)

@@ -1,27 +1,27 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://0yap2mtfpev3"]
 
-[ext_resource type="Script" path="res://scripts/task.gd" id="1_task"]
-[ext_resource type="Script" path="res://scripts/task_zone.gd" id="2_zone"]
+[ext_resource type="Script" uid="uid://dbtgakyr6tnca" path="res://scripts/task.gd" id="1_task"]
+[ext_resource type="Script" uid="uid://dwa1m5j6o4hx3" path="res://scripts/task_zone.gd" id="2_zone"]
 [ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="3_drag"]
+[ext_resource type="Texture2D" uid="uid://dp3jecgrta7kf" path="res://assets/sprites/microwave.png" id="4_microwave"]
 
-[node name="MicrowaveTask" type="Node2D"]
+[node name="MicrowaveTask" type="Node2D" unique_id=849882733]
 script = ExtResource("1_task")
 
-[node name="PlateZone" type="Node2D" parent="."]
-position = Vector2(503, 203)
+[node name="PlateZone" type="Node2D" parent="." unique_id=839124431]
+position = Vector2(211, 268)
 script = ExtResource("2_zone")
 size = Vector2(44, 40)
 label_text = "Piring"
 
-[node name="Door" parent="." instance=ExtResource("3_drag")]
-position = Vector2(545, 178)
+[node name="Door" parent="." unique_id=372126935 instance=ExtResource("3_drag")]
+position = Vector2(44, 281)
 item_name = "microwave_door"
 follow_hand = false
-label_text = "Pintu microwave"
-tint = Color(0.85, 0.85, 0.9, 1)
+texture = ExtResource("4_microwave")
 
-[node name="Bowl" parent="." instance=ExtResource("3_drag")]
-position = Vector2(545, 228)
+[node name="Bowl" parent="." unique_id=1027452868 instance=ExtResource("3_drag")]
+position = Vector2(170, 269)
 item_name = "microwave_bowl"
 label_text = "Mangkuk"
-tint = Color(1.0, 0.75, 0.45, 1)
+tint = Color(1, 0.75, 0.45, 1)

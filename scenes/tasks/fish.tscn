@@ -1,34 +1,55 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://co8p30h38it3s"]
 
-[ext_resource type="Script" path="res://scripts/task.gd" id="1_task"]
-[ext_resource type="Script" path="res://scripts/task_zone.gd" id="2_zone"]
+[ext_resource type="Script" uid="uid://dbtgakyr6tnca" path="res://scripts/task.gd" id="1_task"]
+[ext_resource type="Script" uid="uid://dwa1m5j6o4hx3" path="res://scripts/task_zone.gd" id="2_zone"]
 [ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="3_drag"]
+[ext_resource type="Texture2D" uid="uid://rhkwoyles3ag" path="res://assets/sprites/fishtank_bowl.png" id="4_fishtank_bowl"]
+[ext_resource type="Texture2D" uid="uid://cg5y64wium14g" path="res://assets/sprites/fishtank_decor.png" id="5_fishtank_decor"]
+[ext_resource type="Texture2D" uid="uid://777w3mhci2do" path="res://assets/sprites/fishtank_fish.png" id="6_fishtank_fish"]
+[ext_resource type="Texture2D" uid="uid://ypg28mj6t3lh" path="res://assets/sprites/fish_food.png" id="7_fish_food"]
 
-[node name="FishTask" type="Node2D"]
+[node name="FishTask" type="Node2D" unique_id=1385745387]
 script = ExtResource("1_task")
 
-[node name="AquariumZone" type="Node2D" parent="."]
-position = Vector2(135, 178)
+[node name="TankBowl" type="Sprite2D" parent="." unique_id=906343070]
+position = Vector2(56, 165.75)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("4_fishtank_bowl")
+
+[node name="TankDecor" type="Sprite2D" parent="." unique_id=57969459]
+position = Vector2(54, 165.75)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("5_fishtank_decor")
+
+[node name="TankFish" type="Sprite2D" parent="." unique_id=431393367]
+position = Vector2(53, 165.75)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("6_fishtank_fish")
+
+[node name="AquariumZone" type="Node2D" parent="." unique_id=1913066033]
+position = Vector2(51, 168.75)
+scale = Vector2(1.5, 1.5)
 script = ExtResource("2_zone")
 size = Vector2(64, 40)
 label_text = "Akuarium"
-show_when_idle = true
-color = Color(0.3, 0.7, 1.0, 0.25)
+color = Color(0.3, 0.7, 1, 0.25)
 
-[node name="LidSpot" type="Node2D" parent="."]
-position = Vector2(225, 178)
+[node name="LidSpot" type="Node2D" parent="." unique_id=112425858]
+position = Vector2(96, 178)
+scale = Vector2(0.8, 0.8)
 script = ExtResource("2_zone")
 size = Vector2(36, 36)
 label_text = "Taruh tutup"
 
-[node name="FishLid" parent="." instance=ExtResource("3_drag")]
-position = Vector2(185, 178)
+[node name="FishLid" parent="." unique_id=247888598 instance=ExtResource("3_drag")]
+position = Vector2(120, 114)
+scale = Vector2(0.8, 0.8)
 item_name = "fish_lid"
 label_text = "Tutup pakan"
 tint = Color(0.85, 0.85, 0.9, 1)
 
-[node name="FishCan" parent="." instance=ExtResource("3_drag")]
-position = Vector2(185, 228)
+[node name="FishCan" parent="." unique_id=1617948632 instance=ExtResource("3_drag")]
+position = Vector2(120, 163)
+scale = Vector2(0.8, 0.8)
 item_name = "fish_can"
-label_text = "Pakan ikan"
-tint = Color(1.0, 0.75, 0.45, 1)
+texture = ExtResource("7_fish_food")

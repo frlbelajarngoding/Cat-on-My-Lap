@@ -69,3 +69,9 @@ func is_meter_bar_visible() -> bool:
 
 func is_forgiving_day() -> bool:
 	return current_day in FORGIVING_DAYS
+	
+	# Mulai permainan baru dari nol (dari Title atau New Game di menu pause).
+func start_fresh() -> void:
+	new_game()
+	attempts = 0
+	transition = "next_day"   # scene baru fade-in dari hitam (dibaca FXLayer)

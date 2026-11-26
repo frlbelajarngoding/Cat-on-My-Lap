@@ -34,9 +34,9 @@ func _ready() -> void:
 	Events.cat_fell.connect(_end_game.bind("Kucingnya jatuh!"))
 
 # Perbarui teks debug setiap frame.
-func _process(_delta: float) -> void:
-	label.text = "Torso: %.0f px/s\nHand: %.0f px/s\nCat: %s\nTolerance: %.0f / %.0f" % [
-		torso_speed, hand_speed, Cat.State.keys()[cat_state], tolerance, max_tolerance]
+#func _process(_delta: float) -> void:
+	#label.text = "Torso: %.0f px/s\nHand: %.0f px/s\nCat: %s\nTolerance: %.0f / %.0f" % [
+		#torso_speed, hand_speed, Cat.State.keys()[cat_state], tolerance, max_tolerance]
 
 # Sinkronkan bar dengan meter kucing. Bar menunjukkan SISA meter (penuh = tenang,
 # kosong = kucing bangun), sesuai GDD. Toleransi di kode berarti kebalikannya.

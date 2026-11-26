@@ -234,7 +234,7 @@ func _animate() -> void:
 			var ratio := tolerance / max_tolerance
 			sprite.scale = _base_scale
 			sprite.position = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * (1.0 + ratio * 3.0)
-	_animate_ears()
+	#_animate_ears()
 
 # Animasi sekali jalan: kucing "kaget" (membesar lalu mengecil sedikit).
 func _play_wake() -> void:
@@ -253,11 +253,11 @@ func _play_fall() -> void:
 	tw.tween_property(sprite, "rotation", 1.6, 0.6)
 
 # Petunjuk diegetic: telinga berkedut saat kucing terganggu (gerakan cepat, suara, penalti).
-func _animate_ears() -> void:
-	if ears == null:
-		return
-	var level := clampf(maxf(_last_gain / 4.0, _ear_pulse), 0.0, 1.0)
-	var twitch := sin(_time * 50.0) * 0.35 * level
-	left_ear.rotation = twitch
-	right_ear.rotation = -twitch
-	ears.modulate = sprite.modulate   # warna ikut state kucing
+#func _animate_ears() -> void:
+	#if ears == null:
+		#return
+	#var level := clampf(maxf(_last_gain / 4.0, _ear_pulse), 0.0, 1.0)
+	#var twitch := sin(_time * 50.0) * 0.35 * level
+	#left_ear.rotation = twitch
+	#right_ear.rotation = -twitch
+	#ears.modulate = sprite.modulate   # warna ikut state kucing

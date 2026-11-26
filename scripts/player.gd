@@ -29,6 +29,8 @@ extends Node2D
 # Jeda minimal (detik) antar pergantian tangan, supaya tidak bisa di-spam.
 @export var switch_cooldown: float = 0.2
 
+#var rate = deceleration
+
 # Kecepatan horizontal torso saat ini (px/detik). Negatif = ke kiri.
 var velocity_x := 0.0
 # Tangan yang sedang aktif (mengikuti mouse).
@@ -74,6 +76,8 @@ func _physics_process(delta: float) -> void:
 
 	# Laporkan kecepatan torso (selalu positif) ke sistem lain (Cat).
 	Events.torso_moved.emit(absf(velocity_x))
+	
+	
 
 func _process(delta: float) -> void:
 	_switch_timer = maxf(0.0, _switch_timer - delta)

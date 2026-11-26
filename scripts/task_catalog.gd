@@ -101,22 +101,22 @@ const DEFS := {
 				"hint": "Taruh gelas kembali di meja"},
 		],
 		# Day 4+: vitamin disimpan di lemari, jadi ada langkah buka dan tutup.
-		"steps_by_day": {
-			4: [
-				{"type": "tap", "item": "Cabinet", "toggle": true,
-					"hint": "Buka lemari obat (klik)"},
-				{"type": "hover", "item": "Bottle", "zone": "GlassSpot", "seconds": 1.5,
-					"hint": "Ambil vitamin, tuang pil di atas gelas"},
-				{"type": "release", "item": "Bottle",
-					"hint": "Kembalikan botol"},
-				{"type": "tap", "item": "Cabinet", "toggle": true,
-					"hint": "Tutup lemari (klik)"},
-				{"type": "hover", "item": "Glass", "zone": "MouthZone", "seconds": 1.5,
-					"hint": "Minum: bawa gelas ke mulut"},
-				{"type": "put", "item": "Glass", "zone": "TableZone",
-					"hint": "Taruh gelas kembali di meja"},
-			],
-		},
+		#"steps_by_day": {
+			#4: [
+				#{"type": "tap", "item": "Cabinet", "toggle": true,
+					#"hint": "Buka lemari obat (klik)"},
+				#{"type": "hover", "item": "Bottle", "zone": "GlassSpot", "seconds": 1.5,
+					#"hint": "Ambil vitamin, tuang pil di atas gelas"},
+				#{"type": "release", "item": "Bottle",
+					#"hint": "Kembalikan botol"},
+				#{"type": "tap", "item": "Cabinet", "toggle": true,
+					#"hint": "Tutup lemari (klik)"},
+				#{"type": "hover", "item": "Glass", "zone": "MouthZone", "seconds": 1.5,
+					#"hint": "Minum: bawa gelas ke mulut"},
+				#{"type": "put", "item": "Glass", "zone": "TableZone",
+					#"hint": "Taruh gelas kembali di meja"},
+			#],
+		#},
 	},
 	"lamp": {
 		"name": "Matikan lampu", "category": "A",
@@ -137,8 +137,8 @@ const DEFS := {
 		"steps": [
 			{"type": "hold", "item": "Alarm", "seconds": 2.0,
 				"hint": "Angkat weker, tahan 2 detik"},
-			{"type": "put", "item": "Alarm", "zone": "TableZone",
-				"hint": "Taruh lagi di meja"},
+			#{"type": "put", "item": "Alarm", "zone": "TableZone",
+				#"hint": "Taruh lagi di meja"},
 		],
 	},
 	"phone": {
@@ -148,8 +148,8 @@ const DEFS := {
 		"steps": [
 			{"type": "hover", "item": "Handset", "zone": "EarZone", "seconds": 3.0, "strict": true,
 				"hint": "Angkat gagang ke telinga, tahan 3 dtk tanpa gerak cepat"},
-			{"type": "put", "item": "Handset", "zone": "CradleZone",
-				"hint": "Taruh gagang kembali"},
+			#{"type": "put", "item": "Handset", "zone": "CradleZone",
+				#"hint": "Taruh gagang kembali"},
 		],
 	},
 	"microwave": {

@@ -39,6 +39,11 @@ var _grab_msec := 0
 var _tween: Tween
 # Tingkat "bunyi" (0..1): benda bergetar dan berkedip. Diatur Task.
 var _alert := 0.0
+# Outline putih penanda "benda ini perlu diurus". Dibuat dari siluet gambar
+# (tanpa shader), baru dibangun saat pertama kali dibutuhkan.
+const OUTLINE_PX := 1          # tebal outline dalam piksel TEKSTUR (x sprite_scale di layar)
+var _outline: Sprite2D
+var _outline_tween: Tween
 
 @onready var sprite: Sprite2D = $Sprite2D
 
@@ -76,6 +81,7 @@ func on_grabbed() -> void:
 	is_held = true
 	_grab_msec = Time.get_ticks_msec()
 	z_index = 10   # tampil di atas objek lain selama dipegang
+	AudioManager.play_sfx("click", 0.05) 
 
 # Dipanggil Hand saat item dilepas.
 func on_dropped() -> void:
@@ -127,6 +133,52 @@ func _process(_delta: float) -> void:
 	sprite.position = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * 2.0 * _alert
 	var c := tint.lerp(Color.WHITE, pulse * 0.6 * _alert)
 	sprite.modulate = Color(c.r, c.g, c.b, sprite.modulate.a)   # alpha tetap (toggle)
+
+# Dipanggil Task: true = tampilkan outline putih berkedip di sekeliling benda.
+func set_highlight(on: bool) -> void:
+	if on == (_outline != null and _outline.visible):
+		return
+	if on:
+		if _outline == null:
+			_build_outline()
+		if _outline == null:
+			return
+		_outline.visible = true
+		_outline.self_modulate.a = 1.0
+		_outline_tween = create_tween().set_loops()
+		_outline_tween.tween_property(_outline, "self_modulate:a", 0.45, 0.4)
+		_outline_tween.tween_property(_outline, "self_modulate:a", 1.0, 0.4)
+	else:
+		if _outline_tween:
+			_outline_tween.kill()
+		_outline.visible = false
+
+# Buat sprite siluet putih (gambar dilebarkan OUTLINE_PX) yang digambar DI BELAKANG sprite.
+func _build_outline() -> void:
+	var tex := sprite.texture
+	if tex == null:
+		return
+	var img := tex.get_image()
+	if img == null:
+		return
+	if img.is_compressed():
+		img.decompress()
+	img.convert(Image.FORMAT_RGBA8)
+	var w := img.get_width()
+	var h := img.get_height()
+	var pad := OUTLINE_PX
+	var out := Image.create(w + pad * 2, h + pad * 2, false, Image.FORMAT_RGBA8)
+	for y in range(h):
+		for x in range(w):
+			if img.get_pixel(x, y).a > 0.1:
+				for dy in range(-pad, pad + 1):
+					for dx in range(-pad, pad + 1):
+						out.set_pixel(x + pad + dx, y + pad + dy, Color.WHITE)
+	_outline = Sprite2D.new()
+	_outline.texture = ImageTexture.create_from_image(out)
+	_outline.show_behind_parent = true   # anak sprite, digambar sebelum induknya
+	_outline.visible = false
+	sprite.add_child(_outline)           # ikut skala, getaran, dan posisi sprite
 
 # Sembunyikan / tampilkan benda (dan matikan kemampuan diambil).
 func set_enabled(on: bool) -> void:

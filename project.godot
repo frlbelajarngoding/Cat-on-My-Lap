@@ -11,12 +11,13 @@ config_version=5
 [application]
 
 config/name="Cat on My Lap (Last)"
-run/main_scene="uid://vap1d0bhidl6"
+run/main_scene="uid://b5du1vxohrktk"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
+AudioManager="*uid://buyjsa21d8bta"
 Events="*uid://d2ke3dkv4loy8"
 GameState="*uid://bnjxsc6f5x0eo"
 

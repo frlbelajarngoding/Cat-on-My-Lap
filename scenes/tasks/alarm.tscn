@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dwa1m5j6o4hx3" path="res://scripts/task_zone.gd" id="2_zone"]
 [ext_resource type="PackedScene" uid="uid://ex2guyy041n3" path="res://scenes/draggable.tscn" id="3_drag"]
 [ext_resource type="Texture2D" uid="uid://jbtpy27ys8t1" path="res://assets/sprites/alarm_clock.png" id="4_alarm_clock"]
+[ext_resource type="AudioStream" uid="uid://b7s5oxpmhjmwm" path="res://assets/audio/sfx/Alarm.ogg" id="5_rnteb"]
 
 [node name="AlarmTask" type="Node2D" unique_id=66305715]
 script = ExtResource("1_task")
@@ -18,3 +19,6 @@ label_text = "Meja"
 position = Vector2(250, 270)
 item_name = "alarm_clock"
 texture = ExtResource("4_alarm_clock")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1523888873]
+stream = ExtResource("5_rnteb")

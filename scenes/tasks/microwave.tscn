@@ -15,7 +15,7 @@ size = Vector2(44, 40)
 label_text = "Piring"
 
 [node name="Door" parent="." unique_id=372126935 instance=ExtResource("3_drag")]
-position = Vector2(44, 281)
+position = Vector2(83, 277)
 item_name = "microwave_door"
 follow_hand = false
 texture = ExtResource("4_microwave")

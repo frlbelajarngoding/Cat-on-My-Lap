@@ -3,9 +3,12 @@ extends Node2D
 # ============================================================
 # CAT (Logic Meter Toleransi & State Kucing)
 # ------------------------------------------------------------
-# Kucing berada di pangkuan. Statenya ditentukan oleh "tolerance":
-#   0 = tenang, max_tolerance = kucing bangun (gagal).
-# Gerakan cepat menaikkan tolerance, diam menurunkannya perlahan.
+# Toleransi kucing = lantai hari ini + stress + agitation.
+#   lantai     : meter awal hari (GameState.start_tolerance()). Tidak bisa turun.
+#   stress     : beban dari TUGAS (penalti, drain suara). MENEMPEL; turun hanya lewat
+#                bonus tugas bersih, elus kucing, atau stress_recovery.
+#   agitation  : gangguan dari GERAKAN (torso, tangan, drop). Cepat hilang (calm_decay).
+# 0 = tenang, max_tolerance = kucing bangun (gagal).
 #
 # State:
 #   SLEEPING -> tidur tenang
@@ -14,12 +17,15 @@ extends Node2D
 #   FALLEN   -> jatuh dari pangkuan (GAGAL)
 #
 # Alur state:
-#   SLEEPING -> RESTLESS (tolerance >= restless_threshold)
-#   RESTLESS -> SLEEPING (tolerance <= calm_threshold)
+#   SLEEPING -> RESTLESS (terpakai >= restless_threshold % ruang gerak hari ini)
+#   RESTLESS -> SLEEPING (terpakai <= calm_threshold %)
 #   SLEEPING/RESTLESS -> AWAKE (tolerance >= max_tolerance)
 #   SLEEPING/RESTLESS -> FALLEN (tangan mengguncang keras terlalu lama)
-# Catatan: restless_threshold > calm_threshold sengaja dibuat
-# berbeda (hysteresis) agar state tidak bolak-balik tiap frame.
+# restless_threshold > calm_threshold sengaja berbeda (hysteresis)
+# agar state tidak bolak-balik tiap frame.
+#
+# Saat hari selesai atau gagal, Cat DIBEKUKAN (day_succeeded / day_failed)
+# supaya tidak ada kejadian baru yang mengubah meter.
 # ============================================================
 
 enum State { SLEEPING, RESTLESS, AWAKE, FALLEN }
@@ -35,29 +41,32 @@ const STATE_COLORS := {
 @export_group("Tolerance")
 # Nilai maksimum toleransi; mencapai ini = kucing bangun.
 @export var max_tolerance: float = 100.0
-# Toleransi yang berkurang per detik saat kucing tidak terganggu.
+# Gangguan GERAKAN berkurang sebesar ini per detik saat kucing tidak terganggu.
 @export var calm_decay: float = 6.0
-# Toleransi di atas nilai ini -> state RESTLESS.
+# Beban TUGAS pulih sendiri sebesar ini per detik. 0 = tidak pernah pulih sendiri (sesuai GDD).
+# Naikkan sedikit (mis. 0.1) bila meter terlalu kejam saat playtest.
+@export var stress_recovery: float = 0.0
+# Kucing jadi RESTLESS bila ruang gerak hari ini terpakai >= nilai ini (%).
 @export var restless_threshold: float = 40.0
-# Toleransi di bawah nilai ini -> kembali SLEEPING dari RESTLESS.
+# Kembali SLEEPING bila terpakai <= nilai ini (%).
 @export var calm_threshold: float = 25.0
 
 @export_group("Torso Disturbance")
 # Kecepatan torso (px/s) di bawah ini dianggap tidak mengganggu.
 @export var torso_deadzone: float = 15.0
-# Poin toleransi per (px/s di atas deadzone) per detik.
+# Poin gangguan per (px/s di atas deadzone) per detik.
 @export var torso_weight: float = 0.12
 
 @export_group("Hand Disturbance")
 # Kecepatan tangan relatif (px/s) di bawah ini dianggap aman.
 @export var hand_deadzone: float = 80.0
-# Poin toleransi per (px/s di atas deadzone) per detik.
+# Poin gangguan per (px/s di atas deadzone) per detik.
 @export var hand_weight: float = 0.04
 
 @export_group("Drop Impact")
 # Item dilepas dengan kecepatan di bawah ini -> tidak mengganggu.
 @export var drop_deadzone: float = 150.0
-# Lonjakan instan toleransi = (impact - deadzone) * drop_weight.
+# Lonjakan instan gangguan = (impact - deadzone) * drop_weight.
 @export var drop_weight: float = 0.03
 
 @export_group("Fall")
@@ -66,18 +75,19 @@ const STATE_COLORS := {
 # Lama (detik) mengguncang keras sebelum kucing jatuh.
 @export var violent_time_to_fall: float = 0.25
 
-# Pengali sensitivitas seluruh gangguan. 1.0 = normal.
-# Dipakai Logic Sistem Tugas, mis. 1.5 selama tugas berisiko,
-# atau dinaikkan per hari agar makin sulit.
+# Pengali sensitivitas gangguan GERAKAN. Diatur dari GameState per hari.
 var sensitivity: float = 1.0
 
 # State kucing saat ini.
 var state: State = State.SLEEPING
-# Toleransi saat ini (0..max_tolerance).
+# Toleransi total saat ini (lantai + stress + agitation), dibatasi max_tolerance.
 var tolerance: float = 0.0
-# Batas bawah toleransi hari ini = toleransi terbawa dari hari sebelumnya.
-# Toleransi tidak bisa turun di bawah nilai ini (meter stres tidak kembali ke 0).
+# Batas bawah toleransi hari ini (meter awal hari). Tidak bisa turun di bawahnya.
 var tolerance_floor: float = 0.0
+
+var _stress := 0.0        # beban dari tugas (menempel)
+var _agitation := 0.0     # gangguan dari gerakan (cepat hilang)
+var _locked := false      # True setelah hari selesai/gagal: meter dibekukan
 
 var _torso_speed := 0.0   # kecepatan torso terakhir dari Events
 var _hand_speed := 0.0    # kecepatan tangan terakhir dari Events
@@ -98,16 +108,20 @@ func _ready() -> void:
 	tolerance_floor = GameState.start_tolerance()
 	tolerance = tolerance_floor
 	sensitivity = GameState.sensitivity_for_day()
-	
+
 	_base_scale = sprite.scale
 	sprite.modulate = STATE_COLORS[State.SLEEPING]
 	# Simpan kecepatan terbaru setiap kali Player/Hand memancarkannya.
 	Events.torso_moved.connect(func(s: float) -> void: _torso_speed = s)
 	Events.hand_moved.connect(func(s: float) -> void: _hand_speed = s)
 	Events.item_dropped.connect(_on_item_dropped)
-	# Penalti/pemulihan dari sistem tugas (suara, tumpah, tugas terlambat, bonus).
+	# Penalti/pemulihan dari sistem tugas (suara, tumpah, tugas terlambat, bonus, elus).
 	Events.meter_penalty.connect(_on_meter_penalty)
 	Events.meter_recovery.connect(_on_meter_recovery)
+	# Hari selesai atau gagal: bekukan meter supaya nilainya tidak berubah lagi
+	# (mis. kucing "bangun" saat layar interlude).
+	Events.day_succeeded.connect(func(_d: int) -> void: _locked = true)
+	Events.day_failed.connect(func(_d: int, _r: String) -> void: _locked = true)
 	# Umumkan nilai awal supaya UI langsung tersinkron.
 	Events.tolerance_changed.emit(tolerance, max_tolerance)
 
@@ -115,10 +129,14 @@ func _ready() -> void:
 func is_alive() -> bool:
 	return state == State.SLEEPING or state == State.RESTLESS
 
+# True jika meter boleh berubah: belum gagal dan hari belum dibekukan.
+func _can_act() -> bool:
+	return is_alive() and not _locked
+
 # Loop utama logika: hitung gangguan, update toleransi, evaluasi state.
 func _process(delta: float) -> void:
-	if not is_alive():
-		return   # setelah gagal, hentikan semua perhitungan
+	if not _can_act():
+		return   # setelah gagal / hari selesai, hentikan semua perhitungan
 	_time += delta
 	_ear_pulse = move_toward(_ear_pulse, 0.0, delta * 3.0)
 
@@ -132,10 +150,13 @@ func _process(delta: float) -> void:
 	gain += maxf(0.0, _torso_speed - torso_deadzone) * torso_weight
 	gain += maxf(0.0, rel_hand - hand_deadzone) * hand_weight
 	gain *= sensitivity
-	_last_gain = gain 
+	_last_gain = gain
 
-	# 2. Toleransi naik karena gangguan, turun karena tenang (calm_decay).
-	_set_tolerance(tolerance + (gain - calm_decay) * delta)
+	# 2a. Gangguan gerakan: naik karena gain, turun cepat karena tenang (calm_decay).
+	_agitation = maxf(0.0, _agitation + (gain - calm_decay) * delta)
+	# 2b. Beban tugas: hanya pulih sendiri bila stress_recovery > 0.
+	_stress = maxf(0.0, _stress - stress_recovery * delta)
+	_refresh_tolerance()
 
 	# 3. Mengguncang terlalu keras terlalu lama -> kucing jatuh.
 	#    Timer naik saat guncangan keras, turun perlahan saat tidak.
@@ -150,47 +171,56 @@ func _process(delta: float) -> void:
 	_evaluate_state()
 	_animate()
 
-# Dipanggil saat item dilepas. Pelepasan kasar = lonjakan toleransi instan.
+# Dipanggil saat item dilepas. Pelepasan kasar = lonjakan gangguan instan
+# (komponen gerakan, jadi cepat hilang lagi).
 func _on_item_dropped(_item: Draggable, impact_speed: float) -> void:
-	if not is_alive():
+	if not _can_act():
 		return
-	# Item dilepas sambil tangan bergerak cepat = guncangan mendadak.
 	var jolt := maxf(0.0, impact_speed - drop_deadzone) * drop_weight * sensitivity
 	if jolt > 0.0:
-		_set_tolerance(tolerance + jolt)
+		_agitation += jolt
+		_refresh_tolerance()
 		_evaluate_state()
 
-# Penalti dari sistem tugas: toleransi naik sebesar amount (% meter).
+# Penalti dari sistem tugas (suara, tumpah, terlambat): STRESS bertambah dan MENEMPEL.
 func _on_meter_penalty(amount: float, _reason: String) -> void:
-	if not is_alive():
+	if not _can_act():
 		return
 	_ear_pulse = 1.0   # penalti/suara = telinga berkedut
-	_set_tolerance(tolerance + amount)
+	_stress += amount
+	_refresh_tolerance()
 	_evaluate_state()
 
-# Pemulihan dari sistem tugas: toleransi turun (tidak di bawah lantai harian).
+# Pemulihan dari sistem tugas (bonus tugas bersih, elus kucing): stress berkurang.
+# Tidak bisa melewati lantai hari ini (stress tidak pernah negatif).
 func _on_meter_recovery(amount: float) -> void:
-	if not is_alive():
+	if not _can_act():
 		return
-	_set_tolerance(tolerance - amount)
+	_stress = maxf(0.0, _stress - amount)
+	_refresh_tolerance()
 	_evaluate_state()
 
-# Mengubah toleransi (dibatasi 0..max) dan memberi tahu UI/sistem lain.
-# Signal hanya dikirim jika nilainya benar-benar berubah.
-func _set_tolerance(value: float) -> void:
-	var v := clampf(value, tolerance_floor, max_tolerance)
+# Hitung ulang toleransi total dan beri tahu UI/sistem lain bila berubah.
+func _refresh_tolerance() -> void:
+	var v := clampf(tolerance_floor + _stress + _agitation, tolerance_floor, max_tolerance)
 	if is_equal_approx(v, tolerance):
 		return
 	tolerance = v
 	Events.tolerance_changed.emit(tolerance, max_tolerance)
 
+# Seberapa besar ruang gerak hari ini yang sudah terpakai (0..100 %).
+# Ruang gerak = dari lantai hari ini sampai max_tolerance.
+func _used_percent() -> float:
+	var headroom := maxf(max_tolerance - tolerance_floor, 1.0)
+	return (tolerance - tolerance_floor) / headroom * 100.0
+
 # Menentukan state berdasarkan nilai toleransi saat ini.
 func _evaluate_state() -> void:
 	if tolerance >= max_tolerance:
 		_set_state(State.AWAKE)
-	elif state == State.SLEEPING and tolerance >= restless_threshold:
+	elif state == State.SLEEPING and _used_percent() >= restless_threshold:
 		_set_state(State.RESTLESS)
-	elif state == State.RESTLESS and tolerance <= calm_threshold:
+	elif state == State.RESTLESS and _used_percent() <= calm_threshold:
 		_set_state(State.SLEEPING)
 
 # Pusat perubahan state: memancarkan signal, mengubah warna, dan memicu
@@ -224,8 +254,8 @@ func _animate() -> void:
 			sprite.position = Vector2.ZERO
 			sprite.scale = _base_scale * (1.0 + sin(_time * 2.0) * 0.03)
 		State.RESTLESS:
-			# Gemetar acak, makin kuat saat toleransi makin tinggi.
-			var ratio := tolerance / max_tolerance
+			# Gemetar acak, makin kuat saat ruang gerak makin terpakai.
+			var ratio := _used_percent() / 100.0
 			sprite.scale = _base_scale
 			sprite.position = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * (1.0 + ratio * 3.0)
 	_animate_ears()

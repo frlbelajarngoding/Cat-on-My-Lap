@@ -1,0 +1,111 @@
+[gd_scene format=3 uid="uid://cm727r0j0biux"]
+
+[ext_resource type="Script" uid="uid://cifn2yly3ck7h" path="res://scripts/pause_menu.gd" id="1_n87rw"]
+[ext_resource type="Texture2D" uid="uid://ci11rt2fvv6am" path="res://assets/sprites/pause_box.png" id="2_5d2l8"]
+[ext_resource type="Texture2D" uid="uid://d3pfjqufiu2bh" path="res://assets/sprites/new game_text.png" id="2_kukqi"]
+[ext_resource type="Texture2D" uid="uid://c5cm3q3f03x1n" path="res://assets/sprites/exit_text.png" id="3_5d2l8"]
+[ext_resource type="Texture2D" uid="uid://brn4j8uq8qb24" path="res://assets/sprites/continue_text.png" id="3_7l7mv"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7l7mv"]
+texture = ExtResource("2_5d2l8")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_v4r4p"]
+texture = ExtResource("2_5d2l8")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1s2dm"]
+texture = ExtResource("2_5d2l8")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_5d2l8"]
+texture = ExtResource("3_7l7mv")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_88e76"]
+texture = ExtResource("3_7l7mv")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_knqa7"]
+texture = ExtResource("3_7l7mv")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dmjyp"]
+texture = ExtResource("2_kukqi")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_touxu"]
+texture = ExtResource("2_kukqi")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2pn01"]
+texture = ExtResource("2_kukqi")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tbeor"]
+texture = ExtResource("3_5d2l8")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mk0s6"]
+texture = ExtResource("3_5d2l8")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_5kxjo"]
+texture = ExtResource("3_5d2l8")
+
+[node name="PauseMenu" type="CanvasLayer" unique_id=863069081]
+layer = 100
+script = ExtResource("1_n87rw")
+home_scene = "uid://vap1d0bhidl6"
+
+[node name="PauseButton" type="Button" parent="." unique_id=1346186483]
+custom_minimum_size = Vector2(20, 20)
+custom_maximum_size = Vector2(48, 48)
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 64.0
+offset_bottom = 64.0
+theme_override_styles/normal = SubResource("StyleBoxTexture_7l7mv")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_v4r4p")
+theme_override_styles/hover = SubResource("StyleBoxTexture_1s2dm")
+
+[node name="Overlay" type="Control" parent="." unique_id=1373269213]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="Overlay" unique_id=2085160059]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Center" type="CenterContainer" parent="Overlay" unique_id=818481807]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Buttons" type="VBoxContainer" parent="Overlay/Center" unique_id=235418461]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="ContinueButton" type="Button" parent="Overlay/Center/Buttons" unique_id=2053447008]
+custom_minimum_size = Vector2(280, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_5d2l8")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_88e76")
+theme_override_styles/hover = SubResource("StyleBoxTexture_knqa7")
+
+[node name="NewGameButton" type="Button" parent="Overlay/Center/Buttons" unique_id=1044260340]
+custom_minimum_size = Vector2(280, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_dmjyp")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_touxu")
+theme_override_styles/hover = SubResource("StyleBoxTexture_2pn01")
+text = "
+"
+
+[node name="HomeButton" type="Button" parent="Overlay/Center/Buttons" unique_id=1529571633]
+custom_minimum_size = Vector2(280, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_tbeor")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_mk0s6")
+theme_override_styles/hover = SubResource("StyleBoxTexture_5kxjo")

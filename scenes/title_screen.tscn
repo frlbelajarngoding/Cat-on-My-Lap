@@ -1,0 +1,113 @@
+[gd_scene format=3 uid="uid://vap1d0bhidl6"]
+
+[ext_resource type="Theme" uid="uid://d0s2fnwndxngi" path="res://ui_theme.tres" id="1_sa3yf"]
+[ext_resource type="Script" uid="uid://onut7v3qyvsk" path="res://scripts/title_screen.gd" id="2_s4lrb"]
+[ext_resource type="Texture2D" uid="uid://msyg8qmawf66" path="res://icon.svg" id="3_s4lrb"]
+[ext_resource type="Texture2D" uid="uid://b7qiivj7kcslf" path="res://assets/sprites/play_text.png" id="4_dc4i4"]
+[ext_resource type="Texture2D" uid="uid://c5cm3q3f03x1n" path="res://assets/sprites/exit_text.png" id="5_e54dn"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_3yumr"]
+load_path = "res://.godot/imported/play_text.png-b17eb4807d0bfe5d3da2138aac997b53.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cs5ya"]
+texture = SubResource("CompressedTexture2D_3yumr")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mykxm"]
+texture = ExtResource("4_dc4i4")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tklts"]
+texture = ExtResource("4_dc4i4")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_u26n3"]
+texture = ExtResource("5_e54dn")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ib7db"]
+texture = ExtResource("5_e54dn")
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_frs5l"]
+texture = ExtResource("5_e54dn")
+
+[node name="TitleScreen" type="Control" unique_id=1814085287]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_sa3yf")
+script = ExtResource("2_s4lrb")
+game_scene = "uid://b5du1vxohrktk"
+
+[node name="BackgroundPlaceholder" type="ColorRect" parent="." unique_id=164660123]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="BackgroundArt" type="TextureRect" parent="." unique_id=1368119101]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_s4lrb")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="TitleLabel" type="Label" parent="." unique_id=660067317]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_top = 80.0
+offset_right = 20.0
+offset_bottom = 103.0
+grow_horizontal = 2
+offset_transform_enabled = true
+text = "JUDUL GAME"
+
+[node name="TitleLogo" type="TextureRect" parent="." unique_id=2141913803]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_top = 80.0
+offset_right = 20.0
+offset_bottom = 120.0
+grow_horizontal = 2
+mouse_filter = 2
+texture = ExtResource("3_s4lrb")
+
+[node name="Center" type="CenterContainer" parent="." unique_id=761765364]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Buttons" type="VBoxContainer" parent="Center" unique_id=1585305465]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="PlayButton" type="Button" parent="Center/Buttons" unique_id=104533471]
+custom_minimum_size = Vector2(280, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_cs5ya")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_mykxm")
+theme_override_styles/hover = SubResource("StyleBoxTexture_tklts")
+
+[node name="ExitButton" type="Button" parent="Center/Buttons" unique_id=1757276192]
+custom_minimum_size = Vector2(280, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_u26n3")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_ib7db")
+theme_override_styles/hover = SubResource("StyleBoxTexture_frs5l")
+text = "EXIT"

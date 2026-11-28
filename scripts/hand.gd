@@ -55,6 +55,7 @@ var _prev_pos := Vector2.ZERO
 func _ready() -> void:
 	_prev_pos = global_position
 	sprite.modulate.a = inactive_alpha   # Player yang mengaktifkan salah satunya
+	Events.game_resumed.connect(_on_game_resumed)
 
 # Dipanggil Player saat tangan ini diaktifkan / dinonaktifkan.
 func set_active(on: bool) -> void:
@@ -151,3 +152,16 @@ func _release() -> void:
 	item.on_dropped()
 	# hand_speed dipakai sebagai ukuran "kekerasan" drop.
 	Events.item_dropped.emit(item, hand_speed)
+
+# Setelah pause, mouse sudah pindah (ke tombol Continue). Tanpa sinkronisasi,
+# tangan "berlari" ke mouse, kecepatannya terbaca tinggi, dan kucing terganggu.
+func _on_game_resumed() -> void:
+	if not is_active:
+		return
+	hand_speed = 0.0
+	# Event lepas klik terjadi saat pause dan tidak sampai ke tangan.
+	# Jadi bila LMB sudah tidak ditekan, lepaskan item sekarang (impact 0).
+	if held_item and not Input.is_action_pressed("grab"):
+		_release()
+	global_position = _clamp_to_reach(get_global_mouse_position())
+	_prev_pos = global_position

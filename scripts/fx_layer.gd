@@ -203,15 +203,23 @@ func _randomize_bars(level: float, size: Vector2) -> void:
 # Menggeser dunia game dan HUD sedikit secara acak. Overlay di layer ini tidak ikut bergetar.
 func _apply_shake(level: float) -> void:
 	var s := Vector2(randf_range(-1.0, 1.0), randf_range(-0.3, 0.3)) * shake_pixels * level
-	get_viewport().canvas_transform = Transform2D(0.0, s)   # Node2D di layer 0
-	hud.offset = s                                          # HUD (CanvasLayer)
+	var cam := get_viewport().get_camera_2d()
+	if cam:
+		cam.offset = s                                      # kamera aktif: getar lewat offset
+	else:
+		get_viewport().canvas_transform = Transform2D(0.0, s)   # tanpa kamera: cara lama
+	hud.offset = s                                   # HUD (CanvasLayer)
 
 # Kembalikan semuanya ke normal saat glitch selesai.
 func _clear_glitch() -> void:
 	_glitching = false
 	for bar in _bars:
 		bar.hide()
-	get_viewport().canvas_transform = Transform2D.IDENTITY
+	var cam := get_viewport().get_camera_2d()
+	if cam:
+		cam.offset = Vector2.ZERO
+	else:
+		get_viewport().canvas_transform = Transform2D.IDENTITY
 	hud.offset = Vector2.ZERO
 
 # ---------- 2. BURST ----------

@@ -91,7 +91,9 @@ var _ear_pulse := 0.0     # lonjakan berkedut akibat penalti/suara (0..1)
 @onready var ears: Node2D = get_node_or_null("Ears")
 @onready var left_ear: Node2D = get_node_or_null("Ears/LeftEar")
 @onready var right_ear: Node2D = get_node_or_null("Ears/RightEar")
-@onready var sprite: Sprite2D = $Sprite2D
+@onready var sprite: Sprite2D = $Sprite2D                          # player TANPA kucing (kalah)
+@onready var escape_sprite: Sprite2D = $CatEscape                  # kucing saja (kabur/jatuh)
+@onready var live_sprite: AnimatedSprite2D = get_node("../Torso")  # player + kucing (normal)
 
 func _ready() -> void:
 	# Ambil kondisi hari ini dari GameState (autoload).
@@ -99,8 +101,10 @@ func _ready() -> void:
 	tolerance = tolerance_floor
 	sensitivity = GameState.sensitivity_for_day()
 	
-	_base_scale = sprite.scale
-	sprite.modulate = STATE_COLORS[State.SLEEPING]
+	_base_scale = live_sprite.scale
+	live_sprite.show()
+	sprite.hide()
+	escape_sprite.hide()
 	# Simpan kecepatan terbaru setiap kali Player/Hand memancarkannya.
 	Events.torso_moved.connect(func(s: float) -> void: _torso_speed = s)
 	Events.hand_moved.connect(func(s: float) -> void: _hand_speed = s)
@@ -208,15 +212,14 @@ func _set_state(new_state: State) -> void:
 	state = new_state
 	Events.cat_state_changed.emit(state, old)
 
-	# Warna sprite berganti halus (0.2 detik).
-	create_tween().tween_property(sprite, "modulate", STATE_COLORS[state], 0.2)
-
 	# Kondisi gagal memicu animasi dan signal khusus.
 	match state:
 		State.AWAKE:
+			_show_defeated()
 			_play_wake()
 			Events.cat_woke_up.emit()
 		State.FALLEN:
+			_show_defeated()
 			_play_fall()
 			Events.cat_fell.emit()
 
@@ -227,30 +230,40 @@ func _animate() -> void:
 	match state:
 		State.SLEEPING:
 			# Bernapas pelan: skala naik-turun mengikuti gelombang sin.
-			sprite.position = Vector2.ZERO
-			sprite.scale = _base_scale * (1.0 + sin(_time * 2.0) * 0.03)
+			live_sprite.position = Vector2.ZERO
+			live_sprite.scale = _base_scale * (1.0 + sin(_time * 2.0) * 0.03)
 		State.RESTLESS:
 			# Gemetar acak, makin kuat saat toleransi makin tinggi.
 			var ratio := tolerance / max_tolerance
-			sprite.scale = _base_scale
-			sprite.position = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * (1.0 + ratio * 3.0)
+			live_sprite.scale = _base_scale
+			live_sprite.position = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)) * (1.0 + ratio * 3.0)
 	#_animate_ears()
 
-# Animasi sekali jalan: kucing "kaget" (membesar lalu mengecil sedikit).
+# Kucing kabur: melompat ke samping sambil memudar.
 func _play_wake() -> void:
-	sprite.position = Vector2.ZERO
-	var tw := create_tween()
-	tw.tween_property(sprite, "scale", _base_scale * 1.3, 0.12)
-	tw.tween_property(sprite, "scale", _base_scale * 1.15, 0.12)
-
-# Animasi sekali jalan: kucing jatuh ke bawah sambil berputar (paralel).
-func _play_fall() -> void:
-	sprite.position = Vector2.ZERO
-	sprite.scale = _base_scale
 	var tw := create_tween().set_parallel(true)
-	tw.tween_property(sprite, "position:y", 140.0, 0.6) \
+	tw.tween_property(escape_sprite, "position", escape_sprite.position + Vector2(100, -30), 0.5) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(escape_sprite, "modulate:a", 0.0, 0.4).set_delay(0.2)
+
+# Kucing jatuh sambil berputar.
+func _play_fall() -> void:
+	var tw := create_tween().set_parallel(true)
+	tw.tween_property(escape_sprite, "position:y", escape_sprite.position.y + 140.0, 0.6) \
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tw.tween_property(sprite, "rotation", 1.6, 0.6)
+	tw.tween_property(escape_sprite, "rotation", 1.6, 0.6)
+	
+# Tukar visual: AnimatedSprite (player+kucing) -> Sprite biasa (player saja).
+func _show_defeated() -> void:
+	sprite.global_position = live_sprite.global_position   # samakan posisi (Cat offset y=10)
+	sprite.scale = _base_scale
+	sprite.rotation = live_sprite.rotation
+	live_sprite.hide()
+	sprite.show()
+	escape_sprite.position = Vector2.ZERO
+	escape_sprite.rotation = 0.0
+	escape_sprite.modulate.a = 1.0
+	escape_sprite.show()
 
 # Petunjuk diegetic: telinga berkedut saat kucing terganggu (gerakan cepat, suara, penalti).
 #func _animate_ears() -> void:

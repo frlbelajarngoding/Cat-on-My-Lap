@@ -1,0 +1,127 @@
+[gd_scene format=3 uid="uid://b5du1vxohrktk"]
+
+[ext_resource type="PackedScene" uid="uid://bro5wwxr44srk" path="res://scenes/player.tscn" id="1_0wfyh"]
+[ext_resource type="Script" uid="uid://dhp631qtool0u" path="res://scripts/main.gd" id="1_sugp2"]
+[ext_resource type="Texture2D" uid="uid://dqht4ilybu354" path="res://assets/Background.png" id="2_0ld40"]
+[ext_resource type="Texture2D" uid="uid://c03jfi0i3w18k" path="res://assets/sprites/drawer.png" id="2_choun"]
+[ext_resource type="Script" uid="uid://cifavq7ckk2ou" path="res://scripts/standing_lamp.gd" id="2_jkv2x"]
+[ext_resource type="PackedScene" uid="uid://daij6s0iov2t8" path="res://scenes/hud.tscn" id="4_jyhfs"]
+[ext_resource type="PackedScene" uid="uid://di0efg2f87lia" path="res://scenes/day_manager.tscn" id="5_tbgi4"]
+[ext_resource type="Script" uid="uid://cjq0m0cw33sql" path="res://scripts/task_manager.gd" id="6_taskmgr"]
+[ext_resource type="Texture2D" uid="uid://cmtp1uljjmp5e" path="res://assets/sprites/sofa.png" id="7_sofa"]
+[ext_resource type="Texture2D" uid="uid://bfr2y4x6xsuyd" path="res://assets/sprites/bookshelf.png" id="8_shelf"]
+[ext_resource type="Texture2D" uid="uid://bjg6fqur1fy8o" path="res://assets/sprites/lamp.png" id="9_lamp"]
+[ext_resource type="Texture2D" uid="uid://corr5gknqsxfg" path="res://assets/sprites/low_table.png" id="10_table"]
+[ext_resource type="PackedScene" uid="uid://bp58is60247ho" path="res://scenes/ending_cutscene.tscn" id="12_jbj1t"]
+[ext_resource type="PackedScene" uid="uid://6t3xqmp4fmhx" path="res://scenes/fx.tscn" id="13_muem4"]
+[ext_resource type="Script" uid="uid://c28uf8hn034wo" path="res://scripts/pet_system.gd" id="14_dp3eg"]
+[ext_resource type="Script" uid="uid://dwa1m5j6o4hx3" path="res://scripts/task_zone.gd" id="15_0ld40"]
+[ext_resource type="Texture2D" uid="uid://evp46md4xkgo" path="res://assets/ui/healthbar_under.png" id="16_muem4"]
+[ext_resource type="Texture2D" uid="uid://ddq0x4g1nxdcb" path="res://assets/ui/healthbar_fill.png" id="17_dp3eg"]
+[ext_resource type="PackedScene" uid="uid://cm727r0j0biux" path="res://scenes/pause_menu.tscn" id="18_dp3eg"]
+
+[node name="Main" type="Node2D" unique_id=1621539225]
+script = ExtResource("1_sugp2")
+
+[node name="Background" type="Sprite2D" parent="." unique_id=1229370574]
+position = Vector2(-180, 1)
+scale = Vector2(2.655, 2.655)
+texture = ExtResource("2_0ld40")
+centered = false
+
+[node name="StandingLamp" type="Node2D" parent="." unique_id=1553441751]
+visible = false
+position = Vector2(500, 175)
+script = ExtResource("2_jkv2x")
+
+[node name="Pole" type="ColorRect" parent="StandingLamp" unique_id=322387172]
+offset_right = 4.0
+offset_bottom = 55.0
+pivot_offset = Vector2(-2, -55)
+color = Color(0.5019608, 0.5019608, 0.5019608, 1)
+
+[node name="Shade" type="ColorRect" parent="StandingLamp" unique_id=1724085655]
+offset_right = 32.0
+offset_bottom = 18.0
+pivot_offset = Vector2(-16, -66)
+mouse_filter = 2
+
+[node name="Drawer" type="Sprite2D" parent="." unique_id=867733769]
+position = Vector2(574, 315)
+scale = Vector2(2, 2)
+texture = ExtResource("2_choun")
+
+[node name="Sofa" type="Sprite2D" parent="." unique_id=1026578783]
+position = Vector2(320, 233)
+scale = Vector2(2, 2)
+texture = ExtResource("7_sofa")
+
+[node name="Bookshelf" type="Sprite2D" parent="." unique_id=406727894]
+position = Vector2(500, 100)
+scale = Vector2(2, 2)
+texture = ExtResource("8_shelf")
+
+[node name="Lamp" type="Sprite2D" parent="." unique_id=343282961]
+position = Vector2(588, 242)
+scale = Vector2(2, 2)
+texture = ExtResource("9_lamp")
+
+[node name="Player" parent="." unique_id=1265673362 instance=ExtResource("1_0wfyh")]
+position = Vector2(320, 225)
+
+[node name="LowTable" type="Sprite2D" parent="." unique_id=104053280]
+position = Vector2(320, 305)
+scale = Vector2(2.8, 2.171)
+texture = ExtResource("10_table")
+
+[node name="LowTable2" type="Sprite2D" parent="." unique_id=2017700351]
+position = Vector2(75, 200)
+scale = Vector2(1, 0.775)
+texture = ExtResource("10_table")
+
+[node name="TaskManager" type="Node" parent="." unique_id=1875803857]
+script = ExtResource("6_taskmgr")
+
+[node name="DebugLabel" type="Label" parent="." unique_id=1630325081]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="ToleranceBar" type="TextureProgressBar" parent="." unique_id=1398576524]
+offset_left = 400.0
+offset_top = 12.0
+offset_right = 440.0
+offset_bottom = 97.0
+rotation = 1.5707964
+scale = Vector2(2, 2)
+fill_mode = 3
+texture_under = ExtResource("16_muem4")
+texture_progress = ExtResource("17_dp3eg")
+texture_progress_offset = Vector2(3, 3)
+
+[node name="GameOverLabel" type="Label" parent="." unique_id=1144044184]
+visible = false
+offset_top = 150.0
+offset_right = 640.0
+offset_bottom = 200.0
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+
+[node name="HUD" parent="." unique_id=1354385996 instance=ExtResource("4_jyhfs")]
+visible = false
+
+[node name="DayManager" parent="." unique_id=1448822395 instance=ExtResource("5_tbgi4")]
+
+[node name="EndingCutscene" parent="." unique_id=1735044515 instance=ExtResource("12_jbj1t")]
+visible = false
+
+[node name="FX" parent="." unique_id=1647610987 instance=ExtResource("13_muem4")]
+
+[node name="PetSystem" type="Node" parent="." unique_id=985830910]
+script = ExtResource("14_dp3eg")
+
+[node name="PetZone" type="Node2D" parent="PetSystem" unique_id=1653576925]
+position = Vector2(320, 236)
+script = ExtResource("15_0ld40")
+
+[node name="PauseMenu" parent="." unique_id=863069081 instance=ExtResource("18_dp3eg")]
+visible = false

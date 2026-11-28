@@ -2,8 +2,9 @@
 
 [ext_resource type="Theme" uid="uid://d0s2fnwndxngi" path="res://ui_theme.tres" id="1_sa3yf"]
 [ext_resource type="Script" uid="uid://onut7v3qyvsk" path="res://scripts/title_screen.gd" id="2_s4lrb"]
-[ext_resource type="Texture2D" uid="uid://msyg8qmawf66" path="res://icon.svg" id="3_s4lrb"]
+[ext_resource type="Texture2D" uid="uid://dqht4ilybu354" path="res://assets/Background.png" id="3_e54dn"]
 [ext_resource type="Texture2D" uid="uid://b7qiivj7kcslf" path="res://assets/sprites/play_text.png" id="4_dc4i4"]
+[ext_resource type="Texture2D" uid="uid://dqjb6exlw5dps" path="res://assets/Screenshot_2026-11-27_000034.png" id="4_e54dn"]
 [ext_resource type="Texture2D" uid="uid://c5cm3q3f03x1n" path="res://assets/sprites/exit_text.png" id="5_e54dn"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_3yumr"]
@@ -55,11 +56,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("3_s4lrb")
+texture = ExtResource("3_e54dn")
 expand_mode = 1
 stretch_mode = 6
 
 [node name="TitleLabel" type="Label" parent="." unique_id=660067317]
+visible = false
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -77,21 +79,28 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -20.0
-offset_top = 80.0
-offset_right = 20.0
-offset_bottom = 120.0
+offset_left = -137.0
+offset_top = 50.0
+offset_right = 135.0
+offset_bottom = 151.0
 grow_horizontal = 2
 mouse_filter = 2
-texture = ExtResource("3_s4lrb")
+texture = ExtResource("4_e54dn")
+expand_mode = 1
 
 [node name="Center" type="CenterContainer" parent="." unique_id=761765364]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
+offset_left = -140.0
+offset_top = -190.0
+offset_right = 140.0
+offset_bottom = -54.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
 
 [node name="Buttons" type="VBoxContainer" parent="Center" unique_id=1585305465]
 layout_mode = 2
@@ -110,4 +119,3 @@ layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_u26n3")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_ib7db")
 theme_override_styles/hover = SubResource("StyleBoxTexture_frs5l")
-text = "EXIT"

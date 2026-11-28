@@ -40,7 +40,7 @@ var active_hand: Hand = null
 var _origin_x := 0.0
 var _switch_timer := 0.0
 
-@onready var torso: Sprite2D = $Torso               # sprite badan
+@onready var torso: AnimatedSprite2D = $Torso               # sprite badan
 @onready var shoulder_left: Marker2D = $ShoulderLeft
 @onready var shoulder_right: Marker2D = $ShoulderRight
 @onready var arm_left: Line2D = $ArmLeft            # garis lengan kiri

@@ -12,12 +12,16 @@ extends CanvasLayer
 @onready var status_label: Label = $StatusLabel
 @onready var blackout: ColorRect = $Blackout
 @onready var quest_label: Label = $QuestLabel
+@onready var tolerance_bar: TextureProgressBar = $ToleranceBar
 
 func _ready() -> void:
 	blackout.modulate.a = 0.0   # mulai transparan
 	status_label.hide()
 	Events.time_changed.connect(_on_time_changed)
 	Events.day_started.connect(_on_day_started)
+	Events.tolerance_changed.connect(_on_tolerance_changed)
+	# Cat sudah emit nilai awal sebelum HUD terhubung, jadi set manual.
+	_on_tolerance_changed(GameState.start_tolerance(), 100.0)
 
 # Format jam "HH:MM". hour % 24 supaya jam 24 tampil sebagai 00.
 func _on_time_changed(hour: int, minute: int) -> void:
@@ -69,3 +73,10 @@ func play_interlude(lines: PackedStringArray, seconds_per_line: float = 2.2) -> 
 		await tw.finished
 	status_label.hide()
 	status_label.modulate.a = 1.0
+
+func _on_tolerance_changed(value: float, max_value: float) -> void:
+	var remaining := max_value - value
+	tolerance_bar.max_value = max_value
+	tolerance_bar.value = remaining
+	var danger := remaining / max_value < 0.25
+	tolerance_bar.tint_progress = Color(1.0, 0.55, 0.55) if danger else Color.WHITE
